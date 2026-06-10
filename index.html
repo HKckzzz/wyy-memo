@@ -932,6 +932,202 @@
             100% { background-position: 200% 0; }
         }
 
+        /* ============ 置顶卡片 ============ */
+        .memo-card.pinned {
+            border-left: 4px solid var(--pink-dark);
+            background: linear-gradient(135deg, var(--white) 0%, var(--pink-light) 100%);
+        }
+        .pin-indicator {
+            font-size: 14px;
+            margin-right: 4px;
+            animation: mascotFloat 2s ease-in-out infinite;
+        }
+        .pin-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all var(--bounce);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            touch-action: manipulation;
+        }
+        .pin-btn:active { transform: scale(0.85); }
+        .pin-btn.pinned { color: var(--pink-dark); }
+
+        /* ============ 主题切换器 ============ */
+        .theme-switcher {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .theme-dot {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            cursor: pointer;
+            transition: all var(--bounce);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: var(--shadow-sm);
+            position: relative;
+            touch-action: manipulation;
+        }
+        .theme-dot:active { transform: scale(0.9); }
+        .theme-dot.active {
+            border-color: var(--text);
+            box-shadow: 0 0 0 4px rgba(0,0,0,0.1);
+            transform: scale(1.1);
+        }
+        .theme-dot.active::after {
+            content: '✓';
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: var(--mint);
+            color: white;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        /* ============ 分类管理器 ============ */
+        .cat-manager-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 240px;
+            overflow-y: auto;
+        }
+        .cat-manager-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            background: var(--white);
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-sm);
+        }
+        .cat-manager-emoji {
+            font-size: 24px;
+            width: 36px;
+            text-align: center;
+            cursor: pointer;
+            transition: all var(--bounce);
+            border-radius: 8px;
+            padding: 2px;
+        }
+        .cat-manager-emoji:hover {
+            background: var(--bg);
+            transform: scale(1.2);
+        }
+        .cat-manager-name {
+            flex: 1;
+            font-family: var(--font-cute);
+            font-size: 14px;
+            color: var(--text);
+            border: none;
+            background: transparent;
+            outline: none;
+            min-width: 0;
+        }
+        .cat-manager-name:focus {
+            border-bottom: 2px solid var(--pink);
+        }
+        .cat-del-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: none;
+            background: #FFE0E0;
+            color: #D04040;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all var(--bounce);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            touch-action: manipulation;
+        }
+        .cat-del-btn:active { transform: scale(0.85); }
+        .cat-del-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            background: #eee;
+            color: #999;
+        }
+        .add-cat-row {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+            align-items: center;
+        }
+        .add-cat-input {
+            flex: 1;
+            padding: 10px 14px;
+            border-radius: 20px;
+            border: 2px dashed var(--pink);
+            background: var(--pink-light);
+            font-family: var(--font-main);
+            font-size: 13px;
+            outline: none;
+            min-height: 40px;
+        }
+        .add-cat-input:focus {
+            border-style: solid;
+            border-color: var(--pink-dark);
+        }
+        .add-cat-btn {
+            padding: 10px 16px;
+            border-radius: 20px;
+            border: none;
+            background: var(--mint);
+            color: #4A9E7A;
+            font-family: var(--font-cute);
+            font-size: 13px;
+            cursor: pointer;
+            touch-action: manipulation;
+            min-height: 40px;
+            white-space: nowrap;
+        }
+        .emoji-picker {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-top: 8px;
+            padding: 8px;
+            background: var(--bg);
+            border-radius: var(--radius-sm);
+            max-height: 100px;
+            overflow-y: auto;
+        }
+        .emoji-picker span {
+            font-size: 20px;
+            padding: 4px;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all var(--bounce);
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        .emoji-picker span:hover {
+            background: var(--white);
+            transform: scale(1.3);
+        }
+
         /* ============ 响应式 - 移动端优化 ============ */
         @media (max-width: 480px) {
             .app-container {
@@ -1130,7 +1326,37 @@
             <div class="settings-panel">
                 <div class="settings-handle"></div>
                 <div class="settings-title">⚙️ 设置</div>
-                <div class="settings-desc">换手机时导出备份，新手机导入恢复数据</div>
+
+                <!-- 主题切换 -->
+                <div class="settings-desc" style="margin-top:16px;margin-bottom:10px;">🎨 主题皮肤</div>
+                <div class="theme-switcher" id="themeSwitcher">
+                    <div class="theme-dot active" data-theme="pink" style="background:linear-gradient(135deg,#FFD1DC,#FFB6C8);" title="🌸 樱花粉"></div>
+                    <div class="theme-dot" data-theme="orange" style="background:linear-gradient(135deg,#FFD8C0,#FFC0A0);" title="🐱 猫咪橙"></div>
+                    <div class="theme-dot" data-theme="blue" style="background:linear-gradient(135deg,#C0D8F0,#A0C4E8);" title="🌊 海洋蓝"></div>
+                    <div class="theme-dot" data-theme="green" style="background:linear-gradient(135deg,#D0E8C8,#B8D8A8);" title="🌿 森林绿"></div>
+                    <div class="theme-dot" data-theme="purple" style="background:linear-gradient(135deg,#E0D0F0,#D0B8E8);" title="💜 薰衣草"></div>
+                </div>
+
+                <!-- 分类管理 -->
+                <div class="settings-desc" style="margin-top:20px;margin-bottom:10px;">🏷️ 管理分类</div>
+                <div class="cat-manager-list" id="catManagerList"></div>
+                <div class="add-cat-row">
+                    <span id="newCatEmoji" style="font-size:24px;cursor:pointer;padding:4px 8px;border-radius:8px;background:var(--bg);user-select:none;">🏷️</span>
+                    <input class="add-cat-input" id="newCatInput" placeholder="新分类名称..." maxlength="10" autocomplete="off">
+                    <button class="add-cat-btn" id="addCatBtn">➕ 添加</button>
+                </div>
+                <div class="emoji-picker" id="emojiPicker" style="display:none;">
+                    <span>🏠</span><span>💼</span><span>📚</span><span>💕</span><span>🎯</span>
+                    <span>🎮</span><span>🍔</span><span>✈️</span><span>🏃</span><span>💤</span>
+                    <span>🎵</span><span>🎬</span><span>📷</span><span>🎨</span><span>🐱</span>
+                    <span>🌟</span><span>💡</span><span>🔥</span><span>🎉</span><span>❤️</span>
+                    <span>🛒</span><span>💻</span><span>📱</span><span>🏡</span><span>🌻</span>
+                </div>
+
+                <hr style="border:none;border-top:1px solid var(--pink);margin:20px 0;opacity:0.3;">
+
+                <!-- 数据备份 -->
+                <div class="settings-desc" style="margin-bottom:10px;">💾 数据备份</div>
                 <div class="settings-actions">
                     <button class="settings-btn-action export" id="exportBtn">
                         <span class="action-icon">📤</span>
@@ -1143,7 +1369,7 @@
                         <span class="action-icon">📥</span>
                         <span>
                             <div class="action-label">导入恢复</div>
-                            <div class="action-hint">从备份文件恢复备忘录（会合并，不丢失现有数据）</div>
+                            <div class="action-hint">从备份文件恢复备忘录（合并，不丢现有数据）</div>
                         </span>
                     </button>
                     <input type="file" id="importFileInput" accept=".json">
@@ -1168,12 +1394,30 @@
         (function() {
             // ============ 常量配置 ============
             const STORAGE_KEY = 'wyy_memo_app_data';
-            const CATEGORIES = {
-                life: { name: '生活', emoji: '🏠', badgeClass: 'badge-life' },
-                work: { name: '工作', emoji: '💼', badgeClass: 'badge-work' },
-                study: { name: '学习', emoji: '📚', badgeClass: 'badge-study' },
-                love: { name: '恋爱', emoji: '💕', badgeClass: 'badge-love' },
-                other: { name: '其他', emoji: '🎯', badgeClass: 'badge-other' },
+            const SETTINGS_KEY = 'wyy_memo_settings';
+            const DEFAULT_CATEGORIES = {
+                life: { name: '生活', emoji: '🏠', badgeClass: 'badge-life', builtin: true },
+                work: { name: '工作', emoji: '💼', badgeClass: 'badge-work', builtin: true },
+                study: { name: '学习', emoji: '📚', badgeClass: 'badge-study', builtin: true },
+                love: { name: '恋爱', emoji: '💕', badgeClass: 'badge-love', builtin: true },
+                other: { name: '其他', emoji: '🎯', badgeClass: 'badge-other', builtin: true },
+            };
+            const BADGE_PALETTE = [
+                { bg: '#FFE8D6', color: '#B8703A' }, // 橙
+                { bg: '#D6F0FF', color: '#3A7AB8' }, // 蓝
+                { bg: '#E8E0F8', color: '#6B50A0' }, // 紫
+                { bg: '#FFE0E8', color: '#B85070' }, // 玫红
+                { bg: '#E0F0E0', color: '#508050' }, // 深绿
+                { bg: '#FFF0D0', color: '#B89030' }, // 金
+                { bg: '#E0E8F0', color: '#506080' }, // 灰蓝
+                { bg: '#FFE8E0', color: '#B86040' }, // 砖红
+            ];
+            const THEMES = {
+                pink:   { name:'🌸 樱花粉', bg:'#FFF8F0', pink:'#FFD1DC', pinkDark:'#FFB6C8', pinkLight:'#FFF0F3', mint:'#C1F0DB', mintDark:'#A8E6CF', mintLight:'#E8F8F0', yellow:'#FFF5BA', yellowDark:'#FFE88C', yellowLight:'#FFFBE8', lavender:'#E8D5F0', lavenderDark:'#D4BEE4', lavenderLight:'#F5EDFA', sky:'#B8E4F0', skyDark:'#9AD4E5', skyLight:'#E4F4F8', text:'#5D4E37' },
+                orange:{ name:'🐱 猫咪橙', bg:'#FFF5F0', pink:'#FFD8C0', pinkDark:'#FFC0A0', pinkLight:'#FFF0E8', mint:'#FFE8D0', mintDark:'#FFD4B0', mintLight:'#FFF4E8', yellow:'#FFF0D8', yellowDark:'#FFE4B8', yellowLight:'#FFF8EC', lavender:'#F0E0D4', lavenderDark:'#E4D0C0', lavenderLight:'#F8F0E8', sky:'#E8DCD0', skyDark:'#D8CCBE', skyLight:'#F0E8DC', text:'#5D4E37' },
+                blue:  { name:'🌊 海洋蓝', bg:'#F0F5FA', pink:'#C0D8F0', pinkDark:'#A0C4E8', pinkLight:'#E8F0F8', mint:'#C8E0F4', mintDark:'#A8CCE8', mintLight:'#ECF4FA', yellow:'#E0ECF4', yellowDark:'#C8DCE8', yellowLight:'#F0F6FA', lavender:'#D0E0F0', lavenderDark:'#B8D0E8', lavenderLight:'#E8F0F8', sky:'#B0D4EC', skyDark:'#90B8D8', skyLight:'#E0EEF6', text:'#3D5068' },
+                green: { name:'🌿 森林绿', bg:'#F5FAF0', pink:'#D0E8C8', pinkDark:'#B8D8A8', pinkLight:'#ECF4E8', mint:'#C8E8C0', mintDark:'#A8D8A0', mintLight:'#E8F4E4', yellow:'#E8F0D8', yellowDark:'#D4E4C0', yellowLight:'#F2F6EC', lavender:'#D8E8D0', lavenderDark:'#C0D8B8', lavenderLight:'#ECF4E8', sky:'#C0DCC0', skyDark:'#A0C8A0', skyLight:'#E4F2E4', text:'#4A5D3E' },
+                purple:{ name:'💜 薰衣草', bg:'#F8F5FA', pink:'#E0D0F0', pinkDark:'#D0B8E8', pinkLight:'#F2ECF8', mint:'#E4D8F2', mintDark:'#D0C0E8', mintLight:'#F4F0FA', yellow:'#F0E8F4', yellowDark:'#E0D0E8', yellowLight:'#F8F4FA', lavender:'#D8C8E8', lavenderDark:'#C8B0D8', lavenderLight:'#F0E8F4', sky:'#D0C4E4', skyDark:'#B8A8D4', skyLight:'#ECE4F4', text:'#4A3E5D' },
             };
             const PRIORITY_MAP = {
                 high: { label: '高', stars: '⭐⭐⭐', class: 'pri-high' },
@@ -1184,7 +1428,7 @@
             // ============ 状态管理 ============
             let state = {
                 memos: [],
-                filter: 'all', // 'all' | 'life' | 'work' | 'study' | 'love' | 'other'
+                filter: 'all',
                 searchQuery: '',
                 addCategory: 'life',
                 addPriority: 'high',
@@ -1192,7 +1436,26 @@
                 swipeStartX: 0,
                 swipeCurrentX: 0,
                 swipedMemoId: null,
+                customCategories: [],    // [{key, name, emoji}]
+                theme: 'pink',           // 当前主题
+                badgeIndex: 0,           // 自定义分类配色轮转
             };
+
+            // 获取完整分类列表（默认 + 自定义）
+            function getCategories() {
+                const cats = { ...DEFAULT_CATEGORIES };
+                state.customCategories.forEach((c, i) => {
+                    const palette = BADGE_PALETTE[i % BADGE_PALETTE.length];
+                    cats[c.key] = {
+                        name: c.name,
+                        emoji: c.emoji,
+                        badgeClass: '',
+                        badgeStyle: `background:${palette.bg};color:${palette.color};`,
+                        builtin: false,
+                    };
+                });
+                return cats;
+            }
 
             // ============ DOM 引用缓存 ============
             const $ = (sel) => document.querySelector(sel);
@@ -1224,10 +1487,29 @@
                     const raw = localStorage.getItem(STORAGE_KEY);
                     if (raw) {
                         state.memos = JSON.parse(raw);
+                        // 兼容旧数据：给没有 pinned 字段的备忘加上
+                        state.memos.forEach(m => {
+                            if (m.pinned === undefined) m.pinned = false;
+                            if (m.pinnedAt === undefined) m.pinnedAt = null;
+                        });
                     }
                 } catch (e) {
                     console.warn('加载数据失败:', e);
                     state.memos = [];
+                }
+                // 加载设置
+                try {
+                    const raw = localStorage.getItem(SETTINGS_KEY);
+                    if (raw) {
+                        const settings = JSON.parse(raw);
+                        state.customCategories = settings.customCategories || [];
+                        state.theme = settings.theme || 'pink';
+                        state.badgeIndex = settings.badgeIndex || 0;
+                    }
+                } catch (e) {
+                    state.customCategories = [];
+                    state.theme = 'pink';
+                    state.badgeIndex = 0;
                 }
             }
 
@@ -1237,6 +1519,16 @@
                 } catch (e) {
                     showToast('⚠️ 保存失败，存储空间不足');
                 }
+            }
+
+            function saveSettings() {
+                try {
+                    localStorage.setItem(SETTINGS_KEY, JSON.stringify({
+                        customCategories: state.customCategories,
+                        theme: state.theme,
+                        badgeIndex: state.badgeIndex,
+                    }));
+                } catch (e) { /* 静默 */ }
             }
 
             // ============ 工具函数 ============
@@ -1420,11 +1712,31 @@
                     );
                 }
 
+                // 置顶优先排列
+                filtered.sort((a, b) => {
+                    if (a.pinned && !b.pinned) return -1;
+                    if (!a.pinned && b.pinned) return 1;
+                    if (a.pinned && b.pinned) {
+                        return (b.pinnedAt || '').localeCompare(a.pinnedAt || '');
+                    }
+                    return (b.createdAt || '').localeCompare(a.createdAt || '');
+                });
+
                 return filtered;
             }
 
+            function togglePin(id) {
+                const memo = state.memos.find(m => m.id === id);
+                if (!memo) return;
+                memo.pinned = !memo.pinned;
+                memo.pinnedAt = memo.pinned ? new Date().toISOString() : null;
+                saveMemos();
+                render();
+                showToast(memo.pinned ? '已置顶 📌' : '已取消置顶', memo.pinned ? '📌' : '');
+            }
+
             function renderMemoCard(memo, isNew) {
-                const cat = CATEGORIES[memo.category] || CATEGORIES.other;
+                const cat = getCategories()[memo.category] || getCategories().other;
                 const pri = PRIORITY_MAP[memo.priority] || PRIORITY_MAP.medium;
                 const isEditing = state.editingId === memo.id;
                 const isSwiped = state.swipedMemoId === memo.id;
@@ -1446,6 +1758,7 @@
                 const card = document.createElement('div');
                 card.className = 'memo-card';
                 if (memo.completed) card.classList.add('done');
+                if (memo.pinned) card.classList.add('pinned');
                 if (isNew) card.classList.add('new-memo');
                 if (isSwiped) card.classList.add('swiped');
 
@@ -1457,8 +1770,10 @@
                             <input type="text" class="edit-input" value="${escapeHtml(memo.content)}" maxlength="200" autocomplete="off">
                             <div class="edit-row">
                                 <div class="category-chips edit-cats">
-                                    ${Object.entries(CATEGORIES).map(([key, val]) =>
-                                        `<span class="category-chip ${key} ${memo.category === key ? 'selected' : ''}" data-cat="${key}">${val.emoji} ${val.name}</span>`
+                                    ${Object.entries(getCategories()).map(([key, val]) => {
+                                        const st = val.badgeStyle ? val.badgeStyle.replace(/background:([^;]+);/,'--cat-color:$1;--cat-color-dark:$1;') : '';
+                                        return `<span class="category-chip ${key} ${memo.category === key ? 'selected' : ''}" data-cat="${key}" style="${st}">${val.emoji} ${val.name}</span>`;
+                                    })}
                                     ).join('')}
                                 </div>
                                 <div class="priority-select edit-pri">
@@ -1540,15 +1855,16 @@
                         <div class="memo-top-row">
                             <div class="memo-checkbox ${memo.completed ? 'checked' : ''}" data-toggle="${memo.id}"></div>
                             <div class="memo-body">
-                                <div class="memo-content">${escapeHtml(memo.content)}</div>
+                                <div class="memo-content">${memo.pinned ? '<span class="pin-indicator">📌</span>' : ''}${escapeHtml(memo.content)}</div>
                                 <div class="memo-meta">
-                                    <span class="memo-badge ${cat.badgeClass}">${cat.emoji} ${cat.name}</span>
+                                    <span class="memo-badge" style="${cat.badgeStyle || ''}">${cat.emoji} ${cat.name}</span>
                                     <span class="memo-priority" title="优先级：${pri.label}">${pri.stars}</span>
                                     <span class="memo-time">🕐 ${formatTime(memo.createdAt)}</span>
                                     ${memo.completed ? '<span class="memo-time">✅ ' + formatTime(memo.completedAt) + '</span>' : ''}
                                 </div>
                             </div>
                             <div class="memo-actions">
+                                <button class="memo-action-btn" data-pin="${memo.id}" title="${memo.pinned ? '取消置顶' : '置顶'}" style="${memo.pinned ? 'color:var(--pink-dark);' : ''}">📌</button>
                                 <button class="memo-action-btn" data-edit="${memo.id}" title="编辑">✏️</button>
                                 <button class="memo-action-btn" data-delete="${memo.id}" title="删除">🗑️</button>
                             </div>
@@ -1627,16 +1943,19 @@
                     if (state.editingId === memo.id) return;
 
                     const toggleBtn = e.target.closest('[data-toggle]');
+                    const pinBtn = e.target.closest('[data-pin]');
                     const editBtn = e.target.closest('[data-edit]');
                     const deleteBtn = e.target.closest('[data-delete]');
 
                     if (toggleBtn) {
                         e.stopPropagation();
-                        // 先触发完成动画
                         card.classList.add('completing');
-                        setTimeout(() => {
-                            toggleMemo(memo.id, e);
-                        }, 150);
+                        setTimeout(() => { toggleMemo(memo.id, e); }, 150);
+                    }
+
+                    if (pinBtn) {
+                        e.stopPropagation();
+                        togglePin(memo.id);
                     }
 
                     if (editBtn) {
@@ -1696,15 +2015,22 @@
                 // 更新统计
                 updateStats();
 
-                // 更新筛选标签状态
-                dom.filterTabs.querySelectorAll('.filter-tab').forEach(tab => {
-                    tab.classList.toggle('active', tab.dataset.filter === state.filter);
-                });
+                // 动态渲染筛选标签
+                const cats = getCategories();
+                const filterKeys = ['all', ...Object.keys(cats)];
+                dom.filterTabs.innerHTML = filterKeys.map(key => {
+                    if (key === 'all') {
+                        return `<span class="filter-tab ${state.filter === 'all' ? 'active' : ''}" data-filter="all">🌈 全部</span>`;
+                    }
+                    const cat = cats[key];
+                    return `<span class="filter-tab ${state.filter === key ? 'active' : ''}" data-filter="${key}">${cat.emoji} ${cat.name}</span>`;
+                }).join('');
 
-                // 更新添加表单分类标签状态
-                dom.addCategoryChips.querySelectorAll('.category-chip').forEach(chip => {
-                    chip.classList.toggle('selected', chip.dataset.cat === state.addCategory);
-                });
+                // 动态渲染添加表单分类标签
+                dom.addCategoryChips.innerHTML = Object.entries(cats).map(([key, cat]) => {
+                    const style = cat.badgeStyle ? cat.badgeStyle.replace(/background:([^;]+);/, '--cat-color:$1;--cat-color-dark:$1;') : '';
+                    return `<span class="category-chip ${key} ${state.addCategory === key ? 'selected' : ''}" data-cat="${key}" style="${style}">${cat.emoji} ${cat.name}</span>`;
+                }).join('');
 
                 // 更新添加表单优先级状态
                 dom.addPriority.querySelectorAll('.priority-btn').forEach(btn => {
@@ -1801,7 +2127,7 @@
                 state.swipedMemoId = null;
                 render();
                 if (state.filter !== 'all') {
-                    const cat = CATEGORIES[state.filter];
+                    const cat = getCategories()[state.filter];
                     showToast('筛选：' + cat.emoji + ' ' + cat.name, '🏷️');
                 }
             });
@@ -1892,6 +2218,8 @@
             function openSettings() {
                 settingsOverlay.classList.add('show');
                 document.body.style.overflow = 'hidden';
+                renderThemeSwitcher();
+                renderCatManager();
             }
             function closeSettings() {
                 settingsOverlay.classList.remove('show');
@@ -1900,23 +2228,158 @@
 
             settingsBtn.addEventListener('click', openSettings);
             settingsOverlay.addEventListener('click', (e) => {
-                // 点击遮罩关闭
-                if (e.target === settingsOverlay) {
-                    closeSettings();
-                }
+                if (e.target === settingsOverlay) closeSettings();
             });
-            // 点击面板内容不关闭（阻止冒泡）
             settingsOverlay.querySelector('.settings-panel').addEventListener('click', (e) => {
                 e.stopPropagation();
             });
 
-            // 导出备份
+            // ============ 主题逻辑 ============
+            function applyTheme(themeName) {
+                const t = THEMES[themeName] || THEMES.pink;
+                const root = document.documentElement;
+                root.style.setProperty('--bg', t.bg);
+                root.style.setProperty('--pink', t.pink);
+                root.style.setProperty('--pink-dark', t.pinkDark);
+                root.style.setProperty('--pink-light', t.pinkLight);
+                root.style.setProperty('--mint', t.mint);
+                root.style.setProperty('--mint-dark', t.mintDark);
+                root.style.setProperty('--mint-light', t.mintLight);
+                root.style.setProperty('--yellow', t.yellow);
+                root.style.setProperty('--yellow-dark', t.yellowDark);
+                root.style.setProperty('--yellow-light', t.yellowLight);
+                root.style.setProperty('--lavender', t.lavender);
+                root.style.setProperty('--lavender-dark', t.lavenderDark);
+                root.style.setProperty('--lavender-light', t.lavenderLight);
+                root.style.setProperty('--sky', t.sky);
+                root.style.setProperty('--sky-dark', t.skyDark);
+                root.style.setProperty('--sky-light', t.skyLight);
+                root.style.setProperty('--text', t.text);
+                root.style.setProperty('--text-light', t.text + '99');
+                root.style.setProperty('--text-lighter', t.text + '66');
+                document.querySelector('meta[name="theme-color"]').content = t.pink;
+                state.theme = themeName;
+                saveSettings();
+            }
+
+            function renderThemeSwitcher() {
+                document.querySelectorAll('#themeSwitcher .theme-dot').forEach(dot => {
+                    dot.classList.toggle('active', dot.dataset.theme === state.theme);
+                });
+            }
+
+            document.getElementById('themeSwitcher').addEventListener('click', (e) => {
+                const dot = e.target.closest('.theme-dot');
+                if (!dot) return;
+                applyTheme(dot.dataset.theme);
+                renderThemeSwitcher();
+                showToast('主题切换成功！', THEMES[dot.dataset.theme].emoji || '🎨');
+            });
+
+            // ============ 分类管理 ============
+            function renderCatManager() {
+                const list = document.getElementById('catManagerList');
+                const cats = getCategories();
+                list.innerHTML = Object.entries(cats).map(([key, cat]) => `
+                    <div class="cat-manager-item">
+                        <span class="cat-manager-emoji" data-catkey="${key}" title="点击换图标">${cat.emoji}</span>
+                        <span class="cat-manager-name" data-catkey="${key}">${cat.name}</span>
+                        <button class="cat-del-btn" data-catkey="${key}" ${cat.builtin ? 'disabled title="默认分类不可删除"' : 'title="删除分类"'}>🗑️</button>
+                    </div>
+                `).join('');
+
+                // 点击 emoji 切换
+                list.querySelectorAll('.cat-manager-emoji').forEach(el => {
+                    el.addEventListener('click', () => {
+                        const picker = document.getElementById('emojiPicker');
+                        picker.style.display = picker.style.display === 'none' ? 'flex' : 'none';
+                        picker.dataset.targetKey = el.dataset.catkey;
+                    });
+                });
+
+                // 删除分类
+                list.querySelectorAll('.cat-del-btn:not([disabled])').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const key = btn.dataset.catkey;
+                        const cat = cats[key];
+                        if (confirm(`确定删除"${cat.emoji} ${cat.name}"分类？\n该分类下的备忘会移到"其他"分类。`)) {
+                            // 将该分类下的备忘移到 other
+                            state.memos.forEach(m => { if (m.category === key) m.category = 'other'; });
+                            // 如果是当前选中分类，重置为 life
+                            if (state.addCategory === key) state.addCategory = 'life';
+                            if (state.filter === key) state.filter = 'all';
+                            // 删除自定义分类
+                            state.customCategories = state.customCategories.filter(c => c.key !== key);
+                            saveMemos();
+                            saveSettings();
+                            renderCatManager();
+                            render();
+                            showToast(`已删除"${cat.name}"分类`, '🗑️');
+                        }
+                    });
+                });
+            }
+
+            // 添加新分类
+            document.getElementById('addCatBtn').addEventListener('click', () => {
+                const input = document.getElementById('newCatInput');
+                const name = input.value.trim();
+                if (!name) { showToast('请输入分类名称~', '⚠️'); return; }
+                const emoji = document.getElementById('newCatEmoji').textContent;
+                const key = 'custom_' + Date.now();
+                state.customCategories.push({ key, name, emoji });
+                state.badgeIndex++;
+                saveSettings();
+                input.value = '';
+                renderCatManager();
+                render(); // 刷新筛选标签和添加表单
+                showToast(`新分类"${emoji} ${name}"已添加！`, '✅');
+            });
+
+            // Emoji 选择器
+            document.getElementById('emojiPicker').addEventListener('click', (e) => {
+                const span = e.target.closest('span');
+                if (!span) return;
+                const picker = document.getElementById('emojiPicker');
+                const targetKey = picker.dataset.targetKey;
+                const emoji = span.textContent;
+
+                if (targetKey) {
+                    // 修改已有分类的 emoji
+                    const cats = getCategories();
+                    const cat = cats[targetKey];
+                    if (cat.builtin) {
+                        // 默认分类：找到 customCategories 里对应的（如果有的话只改自定义的）
+                        // 默认分类不支持改 emoji
+                        showToast('默认分类暂不支持修改图标~', '⚠️');
+                    } else {
+                        const custom = state.customCategories.find(c => c.key === targetKey);
+                        if (custom) { custom.emoji = emoji; saveSettings(); renderCatManager(); render(); }
+                    }
+                }
+                // 更新新建分类的 emoji
+                document.getElementById('newCatEmoji').textContent = emoji;
+                picker.style.display = 'none';
+            });
+
+            // 点击新分类 emoji 显示选择器
+            document.getElementById('newCatEmoji').addEventListener('click', () => {
+                const picker = document.getElementById('emojiPicker');
+                picker.style.display = picker.style.display === 'none' ? 'flex' : 'none';
+                picker.dataset.targetKey = '';
+            });
+
+            // 导出备份（更新以包含自定义分类）
             exportBtn.addEventListener('click', () => {
                 const backup = {
-                    version: 1,
+                    version: 2,
                     app: 'wyy备忘录',
                     exportedAt: new Date().toISOString(),
                     memos: state.memos,
+                    settings: {
+                        customCategories: state.customCategories,
+                        theme: state.theme,
+                    },
                 };
                 const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
                 const url = URL.createObjectURL(blob);
@@ -1955,12 +2418,24 @@
                         }
                         // 合并策略：导入的备忘 + 现有备忘（去重，按ID）
                         const existingIds = new Set(state.memos.map(m => m.id));
-                        const newMemos = backup.memos.filter(m => !existingIds.has(m.id));
-                        const merged = [...newMemos, ...state.memos];
-                        state.memos = merged;
+                        const newMemos = (backup.memos || []).filter(m => !existingIds.has(m.id));
+                        // 兼容旧数据：加上 pinned 字段
+                        newMemos.forEach(m => { if (m.pinned === undefined) { m.pinned = false; m.pinnedAt = null; } });
+                        state.memos = [...newMemos, ...state.memos];
+                        // 导入设置（v2+）
+                        if (backup.settings && backup.settings.customCategories) {
+                            const existingKeys = new Set(state.customCategories.map(c => c.key));
+                            const newCats = backup.settings.customCategories.filter(c => !existingKeys.has(c.key));
+                            state.customCategories = [...state.customCategories, ...newCats];
+                            saveSettings();
+                            if (backup.settings.theme && !state.theme) {
+                                state.theme = backup.settings.theme;
+                                applyTheme(state.theme);
+                            }
+                        }
                         saveMemos();
                         render();
-                        showToast(`导入成功！新增${newMemos.length}条备忘录`, '📥');
+                        showToast(`导入成功！新增${newMemos.length}条备忘`, '📥');
                         closeSettings();
                         bounceMascot();
                     } catch (err) {
@@ -2070,14 +2545,15 @@
             // ============ 初始化 ============
             function init() {
                 loadMemos();
+                applyTheme(state.theme); // 应用已保存的主题
 
                 // 如果没有备忘录，添加一些示例数据
                 if (state.memos.length === 0) {
                     const samples = [
-                        { content: '欢迎使用wyy备忘录！点击左侧圆圈可以标记完成哦~', category: 'life', priority: 'high', completed: false, createdAt: new Date(Date.now() - 3600000).toISOString(), completedAt: null },
-                        { content: '左滑备忘录可以快速删除 🗑️', category: 'study', priority: 'medium', completed: false, createdAt: new Date(Date.now() - 7200000).toISOString(), completedAt: null },
-                        { content: '点击顶部的兔兔可以切换吉祥物 🐰', category: 'love', priority: 'low', completed: false, createdAt: new Date(Date.now() - 10800000).toISOString(), completedAt: null },
-                        { content: '支持搜索、按分类筛选、编辑和删除功能', category: 'work', priority: 'medium', completed: true, createdAt: new Date(Date.now() - 86400000).toISOString(), completedAt: new Date(Date.now() - 43200000).toISOString() },
+                        { content: '欢迎使用wyy备忘录！点击📌可以置顶，右上角⚙️切换主题~', category: 'life', priority: 'high', completed: false, pinned: true, pinnedAt: new Date().toISOString(), createdAt: new Date(Date.now() - 3600000).toISOString(), completedAt: null },
+                        { content: '左滑备忘录可以快速删除 🗑️', category: 'study', priority: 'medium', completed: false, pinned: false, pinnedAt: null, createdAt: new Date(Date.now() - 7200000).toISOString(), completedAt: null },
+                        { content: '点击顶部的兔兔可以切换吉祥物 🐰', category: 'love', priority: 'low', completed: false, pinned: false, pinnedAt: null, createdAt: new Date(Date.now() - 10800000).toISOString(), completedAt: null },
+                        { content: '⚙️设置里可以添加自定义分类和切换主题皮肤', category: 'work', priority: 'medium', completed: true, pinned: false, pinnedAt: null, createdAt: new Date(Date.now() - 86400000).toISOString(), completedAt: new Date(Date.now() - 43200000).toISOString() },
                     ];
                     state.memos = samples.map(s => ({ ...s, id: genId() }));
                     saveMemos();
