@@ -1,145 +1,107 @@
 /**
- * 可爱备忘录 - Service Worker
- * 提供离线缓存和 PWA 功能
+ * wyy备忘录 - Service Worker
+ * 离线缓存 + 自动更新
  */
 
-const CACHE_NAME = 'cute-memo-v2';
+const CACHE_NAME = 'wyy-memo-v1';
 const ASSETS_TO_CACHE = [
     './',
     './index.html',
+    './manifest.json',
 ];
 
 // 安装事件 - 预缓存核心资源
 self.addEventListener('install', (event) => {
-    console.log('🐰 Service Worker 安装中...');
+    console.log('🐰 SW 安装中...');
     event.waitUntil(
         caches.open(CACHE_NAME).then((cache) => {
-            console.log('📦 缓存核心资源');
+            console.log('📦 预缓存资源');
             return cache.addAll(ASSETS_TO_CACHE).catch((err) => {
-                console.warn('部分资源缓存失败:', err);
+                console.warn('部分缓存失败:', err);
             });
         }).then(() => {
-            // 强制激活，不等待旧 SW
-            return self.skipWaiting();
+            return self.skipWaiting(); // 立即激活，不等待旧SW
         })
     );
 });
 
 // 激活事件 - 清理旧缓存
 self.addEventListener('activate', (event) => {
-    console.log('🌸 Service Worker 已激活');
+    console.log('🌸 SW 已激活，清理旧缓存');
     event.waitUntil(
         caches.keys().then((cacheNames) => {
             return Promise.all(
-                cacheNames.map((cacheName) => {
-                    if (cacheName !== CACHE_NAME) {
-                        console.log('🗑️ 清理旧缓存:', cacheName);
-                        return caches.delete(cacheName);
+                cacheNames.map((name) => {
+                    if (name !== CACHE_NAME) {
+                        console.log('🗑️ 删除旧缓存:', name);
+                        return caches.delete(name);
                     }
                 })
             );
         }).then(() => {
-            // 立即接管所有页面
-            return self.clients.claim();
+            return self.clients.claim(); // 立即接管所有页面
         })
     );
 });
 
-// 请求拦截 - 缓存优先策略
+// 请求拦截 - 网络优先（保证最新），离线时回退缓存
 self.addEventListener('fetch', (event) => {
-    // 只处理 GET 请求
     if (event.request.method !== 'GET') return;
 
-    // 跳过非 http/https 请求（如 chrome-extension://）
     const url = new URL(event.request.url);
     if (!url.protocol.startsWith('http')) return;
 
+    // 对于页面导航（HTML），使用网络优先策略，保证总是拿到最新版本
+    if (event.request.mode === 'navigate') {
+        event.respondWith(
+            fetch(event.request).then((networkResponse) => {
+                // 网络请求成功，更新缓存
+                const clone = networkResponse.clone();
+                caches.open(CACHE_NAME).then((cache) => {
+                    cache.put(event.request, clone);
+                });
+                return networkResponse;
+            }).catch(() => {
+                // 离线了，用缓存
+                return caches.match(event.request).then((cached) => {
+                    return cached || caches.match('./');
+                });
+            })
+        );
+        return;
+    }
+
+    // 对于其他资源（JS/CSS/图片），缓存优先 + 后台更新
     event.respondWith(
         caches.match(event.request).then((cachedResponse) => {
-            // 缓存命中，返回缓存
             if (cachedResponse) {
-                // 后台更新缓存（Stale-While-Revalidate）
+                // 后台静默更新
                 fetch(event.request).then((networkResponse) => {
                     if (networkResponse && networkResponse.status === 200) {
                         caches.open(CACHE_NAME).then((cache) => {
                             cache.put(event.request, networkResponse.clone());
                         });
                     }
-                }).catch(() => {
-                    // 网络请求失败，静默处理
-                });
+                }).catch(() => {});
                 return cachedResponse;
             }
-
-            // 缓存未命中，发起网络请求
+            // 缓存未命中，走网络
             return fetch(event.request).then((networkResponse) => {
-                // 缓存成功的响应
                 if (networkResponse && networkResponse.status === 200) {
-                    const responseClone = networkResponse.clone();
+                    const clone = networkResponse.clone();
                     caches.open(CACHE_NAME).then((cache) => {
-                        cache.put(event.request, responseClone);
+                        cache.put(event.request, clone);
                     });
                 }
                 return networkResponse;
             }).catch(() => {
-                // 离线时返回一个简单的离线页面
-                if (event.request.mode === 'navigate') {
-                    return new Response(
-                        `<!DOCTYPE html>
-                        <html lang="zh-CN">
-                        <head>
-                            <meta charset="UTF-8">
-                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                            <title>离线中 - 可爱备忘录</title>
-                            <style>
-                                body {
-                                    font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
-                                    background: #FFF8F0;
-                                    display: flex;
-                                    justify-content: center;
-                                    align-items: center;
-                                    min-height: 100vh;
-                                    margin: 0;
-                                    text-align: center;
-                                }
-                                .offline-box {
-                                    padding: 40px;
-                                }
-                                .offline-emoji {
-                                    font-size: 80px;
-                                    display: block;
-                                    animation: float 2s ease-in-out infinite;
-                                }
-                                @keyframes float {
-                                    0%,100% { transform: translateY(0); }
-                                    50% { transform: translateY(-15px); }
-                                }
-                                h1 { color: #5D4E37; margin-top: 16px; }
-                                p { color: #8B7E6B; }
-                            </style>
-                        </head>
-                        <body>
-                            <div class="offline-box">
-                                <span class="offline-emoji">📡</span>
-                                <h1>哎呀，离线了~</h1>
-                                <p>请检查网络连接后重试 💕</p>
-                            </div>
-                        </body>
-                        </html>`,
-                        {
-                            status: 200,
-                            headers: { 'Content-Type': 'text/html; charset=utf-8' }
-                        }
-                    );
-                }
-                // 其他资源的离线回退
                 return new Response('', { status: 408 });
             });
         })
     );
 });
 
-// 接收消息
+// 接收更新通知
 self.addEventListener('message', (event) => {
     if (event.data === 'skipWaiting') {
         self.skipWaiting();
