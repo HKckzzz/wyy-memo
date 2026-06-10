@@ -2006,16 +2006,65 @@
 
             // ============ PWA 设置 ============
             function setupPWA() {
-                // 注册 Service Worker（离线缓存）
+                // 注册 Service Worker（离线缓存 + 自动更新）
                 if ('serviceWorker' in navigator) {
                     navigator.serviceWorker.register('./sw.js', { scope: './' })
                         .then(registration => {
-                            console.log('🎉 Service Worker 注册成功:', registration.scope);
+                            console.log('🎉 SW 注册成功');
+                            // 检测是否有新版本在等待
+                            if (registration.waiting) {
+                                showUpdateToast();
+                            }
+                            registration.addEventListener('updatefound', () => {
+                                const newWorker = registration.installing;
+                                if (newWorker) {
+                                    newWorker.addEventListener('statechange', () => {
+                                        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                            // 新 SW 已就绪，提示用户刷新
+                                            showUpdateToast();
+                                        }
+                                    });
+                                }
+                            });
                         })
                         .catch(err => {
-                            console.warn('⚠️ Service Worker 注册失败:', err.message);
+                            console.warn('⚠️ SW 注册失败:', err.message);
                         });
+
+                    // 如果 SW 已接管，监听 controller 变化
+                    let refreshing = false;
+                    navigator.serviceWorker.addEventListener('controllerchange', () => {
+                        if (refreshing) return;
+                        refreshing = true;
+                        window.location.reload();
+                    });
                 }
+            }
+
+            function showUpdateToast() {
+                const toast = document.createElement('div');
+                toast.className = 'toast';
+                toast.innerHTML = '🔄 <b>有新版本！</b> <button id="updateNowBtn" style="margin-left:8px;padding:6px 14px;border-radius:15px;border:none;background:var(--pink);color:white;font-family:var(--font-cute);cursor:pointer;font-size:13px;touch-action:manipulation;min-height:36px;">点击更新</button>';
+                toast.style.animation = 'toastIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards';
+                dom.toastContainer.appendChild(toast);
+
+                document.getElementById('updateNowBtn').addEventListener('click', () => {
+                    if (navigator.serviceWorker.controller) {
+                        navigator.serviceWorker.controller.postMessage('skipWaiting');
+                    }
+                    // 如果 SW 已经在 waiting，让 waiting 的 SW 接管
+                    navigator.serviceWorker.getRegistration().then(reg => {
+                        if (reg && reg.waiting) {
+                            reg.waiting.postMessage('skipWaiting');
+                        }
+                    });
+                    toast.remove();
+                });
+
+                // 15秒后自动消失
+                setTimeout(() => {
+                    if (toast.parentNode) toast.remove();
+                }, 15000);
             }
 
             // ============ 初始化 ============
