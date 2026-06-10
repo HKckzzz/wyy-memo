@@ -738,6 +738,128 @@
             animation: particleFly 0.8s ease-out forwards;
         }
 
+        /* ============ 设置按钮 ============ */
+        .settings-btn {
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: none;
+            background: var(--white);
+            box-shadow: var(--shadow);
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 100;
+            transition: all var(--bounce);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            touch-action: manipulation;
+        }
+        .settings-btn:hover {
+            transform: rotate(60deg) scale(1.1);
+        }
+        .settings-btn:active {
+            transform: rotate(60deg) scale(0.9);
+        }
+
+        /* ============ 设置面板（底部弹出） ============ */
+        .settings-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.3);
+            z-index: 2000;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .settings-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .settings-panel {
+            background: var(--bg);
+            border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+            padding: 28px 24px 40px;
+            width: 100%;
+            max-width: 520px;
+            box-shadow: 0 -8px 32px rgba(0,0,0,0.15);
+            transform: translateY(100%);
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .settings-overlay.show .settings-panel {
+            transform: translateY(0);
+        }
+        .settings-handle {
+            width: 40px;
+            height: 5px;
+            background: var(--text-lighter);
+            border-radius: 3px;
+            margin: 0 auto 20px;
+            opacity: 0.5;
+        }
+        .settings-title {
+            font-family: var(--font-cute);
+            font-size: 20px;
+            text-align: center;
+            margin-bottom: 8px;
+            color: var(--text);
+        }
+        .settings-desc {
+            font-size: 13px;
+            color: var(--text-light);
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .settings-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .settings-btn-action {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 20px;
+            border-radius: var(--radius-md);
+            border: none;
+            background: var(--white);
+            box-shadow: var(--shadow-sm);
+            cursor: pointer;
+            font-family: var(--font-cute);
+            font-size: 15px;
+            color: var(--text);
+            transition: all var(--bounce);
+            min-height: 56px;
+            touch-action: manipulation;
+        }
+        .settings-btn-action:active {
+            transform: scale(0.97);
+        }
+        .settings-btn-action .action-icon {
+            font-size: 28px;
+        }
+        .settings-btn-action .action-label {
+            font-weight: bold;
+        }
+        .settings-btn-action .action-hint {
+            font-size: 11px;
+            color: var(--text-lighter);
+            font-family: var(--font-main);
+        }
+        .settings-btn-action.export { border-left: 4px solid var(--mint-dark); }
+        .settings-btn-action.import { border-left: 4px solid var(--sky-dark); }
+        .settings-btn-action.danger { border-left: 4px solid #FFB0B0; }
+
+        #importFileInput {
+            display: none;
+        }
+
         /* ============ 页脚 ============ */
         .footer {
             text-align: center;
@@ -922,6 +1044,9 @@
             <p class="app-subtitle">记录每一天的小确幸 ✨</p>
         </header>
 
+        <!-- 设置按钮 -->
+        <button class="settings-btn" id="settingsBtn" title="设置">⚙️</button>
+
         <!-- 统计栏 -->
         <div class="stats-bar">
             <div class="stat-item total">
@@ -998,6 +1123,39 @@
             <span class="empty-emoji">📭</span>
             <p class="empty-text">还没有备忘录呢~</p>
             <p class="empty-hint">快写下你的第一条备忘吧 💕</p>
+        </div>
+
+        <!-- 设置面板（底部弹出） -->
+        <div class="settings-overlay" id="settingsOverlay">
+            <div class="settings-panel">
+                <div class="settings-handle"></div>
+                <div class="settings-title">⚙️ 设置</div>
+                <div class="settings-desc">换手机时导出备份，新手机导入恢复数据</div>
+                <div class="settings-actions">
+                    <button class="settings-btn-action export" id="exportBtn">
+                        <span class="action-icon">📤</span>
+                        <span>
+                            <div class="action-label">导出备份</div>
+                            <div class="action-hint">下载所有备忘录数据为备份文件</div>
+                        </span>
+                    </button>
+                    <button class="settings-btn-action import" id="importBtn">
+                        <span class="action-icon">📥</span>
+                        <span>
+                            <div class="action-label">导入恢复</div>
+                            <div class="action-hint">从备份文件恢复备忘录（会合并，不丢失现有数据）</div>
+                        </span>
+                    </button>
+                    <input type="file" id="importFileInput" accept=".json">
+                    <button class="settings-btn-action danger" id="clearAllBtn">
+                        <span class="action-icon">🗑️</span>
+                        <span>
+                            <div class="action-label">清空全部数据</div>
+                            <div class="action-hint">删除所有备忘录，不可恢复</div>
+                        </span>
+                    </button>
+                </div>
+            </div>
         </div>
 
         <!-- 页脚 -->
@@ -1720,6 +1878,115 @@
                     isPulling = false;
                     pullStartY = 0;
                     pullCurrentY = 0;
+                }
+            });
+
+            // ============ 设置面板 ============
+            const settingsOverlay = $('#settingsOverlay');
+            const settingsBtn = $('#settingsBtn');
+            const exportBtn = $('#exportBtn');
+            const importBtn = $('#importBtn');
+            const importFileInput = $('#importFileInput');
+            const clearAllBtn = $('#clearAllBtn');
+
+            function openSettings() {
+                settingsOverlay.classList.add('show');
+                document.body.style.overflow = 'hidden';
+            }
+            function closeSettings() {
+                settingsOverlay.classList.remove('show');
+                document.body.style.overflow = '';
+            }
+
+            settingsBtn.addEventListener('click', openSettings);
+            settingsOverlay.addEventListener('click', (e) => {
+                // 点击遮罩关闭
+                if (e.target === settingsOverlay) {
+                    closeSettings();
+                }
+            });
+            // 点击面板内容不关闭（阻止冒泡）
+            settingsOverlay.querySelector('.settings-panel').addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+
+            // 导出备份
+            exportBtn.addEventListener('click', () => {
+                const backup = {
+                    version: 1,
+                    app: 'wyy备忘录',
+                    exportedAt: new Date().toISOString(),
+                    memos: state.memos,
+                };
+                const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                const d = new Date();
+                const dateStr = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+                a.download = `wyy备忘录备份-${dateStr}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                showToast(`备份成功！${state.memos.length}条备忘录已导出`, '📤');
+                spawnParticles(
+                    exportBtn.getBoundingClientRect().left + 60,
+                    exportBtn.getBoundingClientRect().top + 20,
+                    8
+                );
+                closeSettings();
+            });
+
+            // 导入恢复
+            importBtn.addEventListener('click', () => {
+                importFileInput.click();
+            });
+            importFileInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    try {
+                        const backup = JSON.parse(ev.target.result);
+                        if (!backup.memos || !Array.isArray(backup.memos)) {
+                            showToast('备份文件格式不正确！', '⚠️');
+                            return;
+                        }
+                        // 合并策略：导入的备忘 + 现有备忘（去重，按ID）
+                        const existingIds = new Set(state.memos.map(m => m.id));
+                        const newMemos = backup.memos.filter(m => !existingIds.has(m.id));
+                        const merged = [...newMemos, ...state.memos];
+                        state.memos = merged;
+                        saveMemos();
+                        render();
+                        showToast(`导入成功！新增${newMemos.length}条备忘录`, '📥');
+                        closeSettings();
+                        bounceMascot();
+                    } catch (err) {
+                        showToast('备份文件解析失败！', '❌');
+                    }
+                };
+                reader.readAsText(file);
+                // 清除 input 以便可以重复导入同一文件
+                importFileInput.value = '';
+            });
+
+            // 清空全部数据
+            clearAllBtn.addEventListener('click', () => {
+                if (state.memos.length === 0) {
+                    showToast('没有数据需要清空~', '📭');
+                    return;
+                }
+                // 二次确认
+                if (confirm(`⚠️ 确定要删除全部 ${state.memos.length} 条备忘录吗？\n\n此操作不可恢复！建议先导出备份。`)) {
+                    if (confirm('真的确定吗？再给你一次反悔的机会 🥺')) {
+                        state.memos = [];
+                        saveMemos();
+                        render();
+                        showToast('所有数据已清空', '🗑️');
+                        closeSettings();
+                    }
                 }
             });
 
