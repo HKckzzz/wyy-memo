@@ -1,0 +1,1832 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <meta name="theme-color" content="#FFD1DC">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="wyy备忘录">
+    <title>🌸 wyy备忘录</title>
+    <!-- Google Fonts - ZCOOL KuaiLe 可爱中文字体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐰</text></svg>">
+
+    <style>
+        /* ============ CSS 变量 & 重置 ============ */
+        :root {
+            --bg: #FFF8F0;
+            --bg-card: #FFFFFF;
+            --pink: #FFD1DC;
+            --pink-dark: #FFB6C8;
+            --pink-light: #FFF0F3;
+            --mint: #C1F0DB;
+            --mint-dark: #A8E6CF;
+            --mint-light: #E8F8F0;
+            --yellow: #FFF5BA;
+            --yellow-dark: #FFE88C;
+            --yellow-light: #FFFBE8;
+            --lavender: #E8D5F0;
+            --lavender-dark: #D4BEE4;
+            --lavender-light: #F5EDFA;
+            --sky: #B8E4F0;
+            --sky-dark: #9AD4E5;
+            --sky-light: #E4F4F8;
+            --peach: #FFE0C0;
+            --peach-dark: #FFCFA0;
+            --peach-light: #FFF3E6;
+            --text: #5D4E37;
+            --text-light: #8B7E6B;
+            --text-lighter: #B8A99A;
+            --white: #FFFFFF;
+            --shadow-sm: 0 2px 8px rgba(139, 126, 107, 0.08);
+            --shadow: 0 4px 16px rgba(139, 126, 107, 0.10);
+            --shadow-lg: 0 8px 32px rgba(139, 126, 107, 0.12);
+            --radius-xl: 24px;
+            --radius-lg: 20px;
+            --radius-md: 16px;
+            --radius-sm: 12px;
+            --radius-xs: 8px;
+            --font-cute: 'ZCOOL KuaiLe', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+            --font-main: 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', -apple-system, sans-serif;
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --bounce: 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            min-height: 100dvh;
+            line-height: 1.6;
+            overflow-x: hidden;
+            /* 背景装饰 */
+            background-image:
+                radial-gradient(circle at 10% 20%, rgba(255, 209, 220, 0.25) 0%, transparent 50%),
+                radial-gradient(circle at 90% 80%, rgba(193, 240, 219, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(255, 245, 186, 0.15) 0%, transparent 50%);
+            background-attachment: fixed;
+        }
+
+        /* ============ 滚动条美化 ============ */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--pink-dark);
+            border-radius: 3px;
+        }
+
+        /* ============ 主容器 ============ */
+        .app-container {
+            max-width: 520px;
+            margin: 0 auto;
+            padding: 16px;
+            padding-bottom: 100px;
+            position: relative;
+        }
+
+        /* ============ 下拉刷新 ============ */
+        .pull-indicator {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100%);
+            z-index: 1000;
+            background: var(--white);
+            padding: 12px 24px;
+            border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+            box-shadow: var(--shadow);
+            font-family: var(--font-cute);
+            font-size: 14px;
+            color: var(--text-light);
+            transition: transform 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .pull-indicator.active {
+            transform: translateX(-50%) translateY(0);
+        }
+        .pull-indicator .spinner {
+            width: 20px;
+            height: 20px;
+            border: 3px solid var(--pink);
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+
+        /* ============ 头部 - 吉祥物区域 ============ */
+        .header {
+            text-align: center;
+            padding: 24px 16px 8px;
+            position: relative;
+        }
+        .mascot-area {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 4px;
+        }
+        .mascot {
+            font-size: 72px;
+            display: block;
+            animation: mascotFloat 3s ease-in-out infinite;
+            filter: drop-shadow(0 4px 8px rgba(255, 182, 200, 0.3));
+            cursor: pointer;
+            transition: transform var(--bounce);
+            line-height: 1;
+        }
+        .mascot:active {
+            animation: mascotBounce 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        .floating-emoji {
+            position: absolute;
+            font-size: 20px;
+            pointer-events: none;
+            animation: floatAround 4s ease-in-out infinite;
+        }
+        .floating-emoji:nth-child(2) { top: -10px; left: -30px; animation-delay: 0s; }
+        .floating-emoji:nth-child(3) { top: 5px; right: -35px; animation-delay: 0.8s; }
+        .floating-emoji:nth-child(4) { bottom: 0; left: -20px; animation-delay: 1.6s; }
+        .floating-emoji:nth-child(5) { bottom: 10px; right: -25px; animation-delay: 2.4s; }
+        .floating-emoji:nth-child(6) { top: -20px; left: 50%; animation-delay: 3.2s; }
+
+        .app-title {
+            font-family: var(--font-cute);
+            font-size: 28px;
+            color: var(--text);
+            margin-top: 4px;
+            letter-spacing: 2px;
+        }
+        .app-subtitle {
+            font-size: 13px;
+            color: var(--text-light);
+            font-family: var(--font-cute);
+            margin-top: 2px;
+        }
+
+        /* ============ 统计栏 ============ */
+        .stats-bar {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            padding: 8px 0 16px;
+            flex-wrap: wrap;
+        }
+        .stat-item {
+            background: var(--white);
+            border-radius: var(--radius-md);
+            padding: 10px 18px;
+            box-shadow: var(--shadow-sm);
+            text-align: center;
+            min-width: 70px;
+            transition: transform var(--bounce);
+        }
+        .stat-item:hover {
+            transform: scale(1.05);
+        }
+        .stat-num {
+            font-family: var(--font-cute);
+            font-size: 22px;
+            color: var(--pink-dark);
+            line-height: 1;
+        }
+        .stat-label {
+            font-size: 11px;
+            color: var(--text-light);
+            margin-top: 2px;
+        }
+        .stat-item.completed .stat-num { color: var(--mint-dark); }
+        .stat-item.total .stat-num { color: var(--sky-dark); }
+
+        /* ============ 添加表单区域 ============ */
+        .add-section {
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+            transition: box-shadow var(--transition);
+        }
+        .add-section:focus-within {
+            box-shadow: var(--shadow-lg), 0 0 0 3px rgba(255, 209, 220, 0.4);
+        }
+        .add-input {
+            width: 100%;
+            border: 2px dashed var(--pink);
+            border-radius: var(--radius-md);
+            padding: 14px 16px;
+            font-size: 15px;
+            font-family: var(--font-main);
+            color: var(--text);
+            background: var(--pink-light);
+            resize: none;
+            outline: none;
+            transition: all var(--transition);
+            min-height: 52px;
+            line-height: 1.5;
+        }
+        .add-input::placeholder {
+            color: var(--text-lighter);
+            font-family: var(--font-cute);
+        }
+        .add-input:focus {
+            border-color: var(--pink-dark);
+            background: var(--white);
+            border-style: solid;
+        }
+        .add-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .category-chips {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            flex: 1;
+            min-width: 0;
+        }
+        .category-chip {
+            padding: 8px 14px;
+            border-radius: 20px;
+            border: 2px solid transparent;
+            background: var(--bg);
+            font-size: 13px;
+            cursor: pointer;
+            transition: all var(--transition);
+            font-family: var(--font-cute);
+            white-space: nowrap;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .category-chip:active {
+            transform: scale(0.95);
+        }
+        .category-chip.life { --cat-color: var(--mint); --cat-color-dark: var(--mint-dark); }
+        .category-chip.work { --cat-color: var(--lavender); --cat-color-dark: var(--lavender-dark); }
+        .category-chip.study { --cat-color: var(--sky); --cat-color-dark: var(--sky-dark); }
+        .category-chip.love { --cat-color: var(--pink); --cat-color-dark: var(--pink-dark); }
+        .category-chip.other { --cat-color: var(--yellow); --cat-color-dark: var(--yellow-dark); }
+
+        .category-chip:hover {
+            background: var(--cat-color, var(--pink-light));
+        }
+        .category-chip.selected {
+            background: var(--cat-color, var(--pink));
+            border-color: var(--cat-color-dark, var(--pink-dark));
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            transform: scale(1.05);
+        }
+
+        .priority-select {
+            display: flex;
+            gap: 6px;
+        }
+        .priority-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            background: var(--bg);
+            font-size: 18px;
+            cursor: pointer;
+            transition: all var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        .priority-btn:active {
+            transform: scale(0.9);
+        }
+        .priority-btn:hover {
+            border-color: var(--text-lighter);
+        }
+        .priority-btn.selected-high {
+            background: #FFE0E0;
+            border-color: #FFB0B0;
+        }
+        .priority-btn.selected-medium {
+            background: #FFF8E0;
+            border-color: #FFE088;
+        }
+        .priority-btn.selected-low {
+            background: #E0F8E0;
+            border-color: #A0D8A0;
+        }
+
+        .add-btn {
+            padding: 12px 28px;
+            border-radius: 25px;
+            border: none;
+            background: linear-gradient(135deg, var(--pink), var(--pink-dark));
+            color: white;
+            font-size: 16px;
+            font-family: var(--font-cute);
+            cursor: pointer;
+            transition: all var(--transition);
+            box-shadow: 0 4px 12px rgba(255, 182, 200, 0.4);
+            white-space: nowrap;
+            touch-action: manipulation;
+            min-height: 44px;
+            letter-spacing: 1px;
+        }
+        .add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 182, 200, 0.5);
+        }
+        .add-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* ============ 筛选 & 搜索栏 ============ */
+        .toolbar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        .search-box {
+            flex: 1;
+            min-width: 160px;
+            position: relative;
+        }
+        .search-input {
+            width: 100%;
+            padding: 12px 16px 12px 42px;
+            border-radius: 25px;
+            border: 2px solid transparent;
+            background: var(--white);
+            box-shadow: var(--shadow-sm);
+            font-size: 14px;
+            font-family: var(--font-main);
+            color: var(--text);
+            outline: none;
+            transition: all var(--transition);
+            min-height: 44px;
+        }
+        .search-input:focus {
+            border-color: var(--pink);
+            box-shadow: var(--shadow);
+        }
+        .search-input::placeholder {
+            color: var(--text-lighter);
+            font-family: var(--font-cute);
+        }
+        .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+            pointer-events: none;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .filter-tab {
+            padding: 10px 16px;
+            border-radius: 20px;
+            border: 2px solid transparent;
+            background: var(--white);
+            font-size: 13px;
+            font-family: var(--font-cute);
+            cursor: pointer;
+            transition: all var(--transition);
+            white-space: nowrap;
+            box-shadow: var(--shadow-sm);
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .filter-tab:active {
+            transform: scale(0.95);
+        }
+        .filter-tab.active {
+            background: var(--pink);
+            border-color: var(--pink-dark);
+            color: var(--text);
+            box-shadow: var(--shadow);
+            transform: scale(1.05);
+        }
+
+        /* ============ 备忘录列表 ============ */
+        .memo-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .memo-card-wrapper {
+            position: relative;
+            overflow: hidden;
+            border-radius: var(--radius-lg);
+        }
+        .memo-delete-action {
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            width: 80px;
+            background: linear-gradient(135deg, #FF8A8A, #FF6B6B);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+            font-size: 14px;
+            color: white;
+            font-family: var(--font-cute);
+            cursor: pointer;
+            user-select: none;
+            -webkit-user-select: none;
+            transition: opacity 0.2s;
+        }
+        .memo-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+            touch-action: pan-y;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        .memo-card.swiped {
+            transform: translateX(-85px);
+            border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+        }
+        .memo-card.removing {
+            animation: slideOutRight 0.35s ease-in forwards;
+        }
+        .memo-card.new-memo {
+            animation: bounceIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        .memo-card.completing {
+            animation: completeShake 0.5s ease;
+        }
+        .memo-card:hover {
+            box-shadow: var(--shadow);
+        }
+
+        /* 完成状态 */
+        .memo-card.done {
+            opacity: 0.7;
+            background: var(--mint-light);
+        }
+        .memo-card.done .memo-content {
+            text-decoration: line-through;
+            text-decoration-color: var(--mint-dark);
+            text-decoration-thickness: 2px;
+            color: var(--text-lighter);
+        }
+
+        .memo-top-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        .memo-checkbox {
+            flex-shrink: 0;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 3px solid var(--pink);
+            cursor: pointer;
+            transition: all var(--bounce);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 2px;
+            background: var(--white);
+            touch-action: manipulation;
+            min-width: 28px;
+            min-height: 28px;
+        }
+        .memo-checkbox:hover {
+            border-color: var(--pink-dark);
+            transform: scale(1.15);
+        }
+        .memo-checkbox.checked {
+            background: var(--mint);
+            border-color: var(--mint-dark);
+            animation: checkPop 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        .memo-checkbox.checked::after {
+            content: '✓';
+            font-size: 16px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .memo-body {
+            flex: 1;
+            min-width: 0;
+        }
+        .memo-content {
+            font-size: 15px;
+            color: var(--text);
+            word-break: break-word;
+            line-height: 1.5;
+            transition: all var(--transition);
+        }
+        .memo-meta {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .memo-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-family: var(--font-cute);
+            white-space: nowrap;
+        }
+        .badge-life { background: var(--mint-light); color: #4A9E7A; }
+        .badge-work { background: var(--lavender-light); color: #8B6BA0; }
+        .badge-study { background: var(--sky-light); color: #5A8FA0; }
+        .badge-love { background: var(--pink-light); color: #C48090; }
+        .badge-other { background: var(--yellow-light); color: #B8953A; }
+
+        .memo-priority {
+            font-size: 13px;
+        }
+        .memo-time {
+            font-size: 11px;
+            color: var(--text-lighter);
+            white-space: nowrap;
+        }
+        .memo-actions {
+            display: flex;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+        .memo-action-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all var(--bounce);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            touch-action: manipulation;
+            min-width: 36px;
+            min-height: 36px;
+        }
+        .memo-action-btn:hover {
+            background: var(--bg);
+            transform: scale(1.15);
+        }
+        .memo-action-btn:active {
+            transform: scale(0.85);
+        }
+
+        /* 编辑模式 */
+        .memo-card.editing .memo-body {
+            width: 100%;
+        }
+        .edit-input {
+            width: 100%;
+            border: 2px solid var(--pink);
+            border-radius: var(--radius-sm);
+            padding: 10px 12px;
+            font-size: 15px;
+            font-family: var(--font-main);
+            color: var(--text);
+            background: var(--pink-light);
+            resize: none;
+            outline: none;
+            min-height: 44px;
+            line-height: 1.5;
+        }
+        .edit-row {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .edit-save, .edit-cancel {
+            padding: 8px 18px;
+            border-radius: 20px;
+            border: none;
+            font-family: var(--font-cute);
+            font-size: 13px;
+            cursor: pointer;
+            transition: all var(--transition);
+            touch-action: manipulation;
+            min-height: 40px;
+        }
+        .edit-save {
+            background: var(--mint);
+            color: #4A9E7A;
+        }
+        .edit-cancel {
+            background: var(--bg);
+            color: var(--text-light);
+        }
+        .edit-save:hover { background: var(--mint-dark); }
+        .edit-cancel:hover { background: #e8e0d8; }
+
+        /* ============ 空状态 ============ */
+        .empty-state {
+            text-align: center;
+            padding: 48px 20px;
+            display: none;
+        }
+        .empty-state.show {
+            display: block;
+            animation: bounceIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        .empty-emoji {
+            font-size: 64px;
+            display: block;
+            animation: mascotFloat 3s ease-in-out infinite;
+        }
+        .empty-text {
+            font-family: var(--font-cute);
+            font-size: 18px;
+            color: var(--text-light);
+            margin-top: 12px;
+        }
+        .empty-hint {
+            font-size: 13px;
+            color: var(--text-lighter);
+            margin-top: 6px;
+        }
+
+        /* ============ Toast 通知 ============ */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            pointer-events: none;
+        }
+        .toast {
+            background: var(--white);
+            padding: 12px 24px;
+            border-radius: 25px;
+            box-shadow: var(--shadow-lg);
+            font-family: var(--font-cute);
+            font-size: 14px;
+            color: var(--text);
+            animation: toastIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55), toastOut 0.3s ease 2s forwards;
+            pointer-events: auto;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* ============ 粒子效果 ============ */
+        .particle {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9998;
+            font-size: 20px;
+            animation: particleFly 0.8s ease-out forwards;
+        }
+
+        /* ============ 页脚 ============ */
+        .footer {
+            text-align: center;
+            padding: 24px 16px;
+            font-size: 12px;
+            color: var(--text-lighter);
+            font-family: var(--font-cute);
+        }
+
+        /* ============ 关键帧动画 ============ */
+        @keyframes mascotFloat {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            25% { transform: translateY(-8px) rotate(-2deg); }
+            75% { transform: translateY(-4px) rotate(2deg); }
+        }
+        @keyframes mascotBounce {
+            0% { transform: scale(1); }
+            30% { transform: scale(1.3); }
+            50% { transform: scale(0.9); }
+            70% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        @keyframes floatAround {
+            0%, 100% { transform: translateY(0px) scale(1); opacity: 0.7; }
+            50% { transform: translateY(-12px) scale(1.2); opacity: 1; }
+        }
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.05); }
+            70% { transform: scale(0.95); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes completeShake {
+            0%, 100% { transform: translateX(0); }
+            15% { transform: translateX(-4px) rotate(-1deg); }
+            30% { transform: translateX(4px) rotate(1deg); }
+            45% { transform: translateX(-3px); }
+            60% { transform: translateX(3px); }
+            75% { transform: translateX(-1px); }
+        }
+        @keyframes checkPop {
+            0% { transform: scale(1); }
+            30% { transform: scale(1.4); }
+            50% { transform: scale(0.85); }
+            70% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        @keyframes slideOutRight {
+            0% { transform: translateX(0); opacity: 1; }
+            30% { transform: translateX(-10px); opacity: 1; }
+            100% { transform: translateX(120%); opacity: 0; }
+        }
+        @keyframes toastIn {
+            0% { transform: translateY(-40px) scale(0.8); opacity: 0; }
+            100% { transform: translateY(0) scale(1); opacity: 1; }
+        }
+        @keyframes toastOut {
+            0% { opacity: 1; }
+            100% { opacity: 0; transform: translateY(-20px); }
+        }
+        @keyframes particleFly {
+            0% { transform: translate(0, 0) scale(1); opacity: 1; }
+            100% { transform: translate(var(--px), var(--py)) scale(0); opacity: 0; }
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        /* ============ 响应式 - 移动端优化 ============ */
+        @media (max-width: 480px) {
+            .app-container {
+                padding: 10px;
+                padding-bottom: 90px;
+            }
+            .header {
+                padding: 16px 8px 4px;
+            }
+            .mascot {
+                font-size: 56px;
+            }
+            .app-title {
+                font-size: 24px;
+            }
+            .add-section {
+                padding: 14px;
+                border-radius: var(--radius-lg);
+            }
+            .add-input {
+                font-size: 14px;
+                padding: 12px;
+                min-height: 48px;
+            }
+            .category-chips {
+                gap: 6px;
+            }
+            .category-chip {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+            .filter-tab {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+            .add-row {
+                gap: 8px;
+            }
+            .memo-card {
+                padding: 14px;
+            }
+            .memo-content {
+                font-size: 14px;
+            }
+            .stats-bar {
+                gap: 12px;
+            }
+            .stat-item {
+                padding: 8px 14px;
+                min-width: 60px;
+            }
+            .stat-num {
+                font-size: 18px;
+            }
+        }
+
+        /* 暗色模式简单适配 */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #2C2416;
+                --bg-card: #3D3426;
+                --text: #E8DCC8;
+                --text-light: #B8A890;
+                --text-lighter: #8B7B65;
+                --white: #3D3426;
+                --shadow-sm: 0 2px 8px rgba(0,0,0,0.2);
+                --shadow: 0 4px 16px rgba(0,0,0,0.3);
+                --shadow-lg: 0 8px 32px rgba(0,0,0,0.4);
+            }
+            body {
+                background-image:
+                    radial-gradient(circle at 10% 20%, rgba(255, 209, 220, 0.08) 0%, transparent 50%),
+                    radial-gradient(circle at 90% 80%, rgba(193, 240, 219, 0.06) 0%, transparent 50%),
+                    radial-gradient(circle at 50% 50%, rgba(255, 245, 186, 0.05) 0%, transparent 50%);
+            }
+            .add-input, .search-input, .edit-input {
+                color: var(--text);
+            }
+            .memo-card.done {
+                opacity: 0.6;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============ 下拉刷新指示器 ============ -->
+    <div class="pull-indicator" id="pullIndicator">
+        <span class="spinner" style="display:none;" id="pullSpinner"></span>
+        <span id="pullText">⬇️ 下拉刷新</span>
+    </div>
+
+    <!-- ============ Toast 容器 ============ -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- ============ 主容器 ============ -->
+    <div class="app-container" id="appContainer">
+
+        <!-- 头部 - 吉祥物区域 -->
+        <header class="header">
+            <div class="mascot-area">
+                <span class="mascot" id="mascot" title="点我！">🐰</span>
+                <span class="floating-emoji">🌸</span>
+                <span class="floating-emoji">✨</span>
+                <span class="floating-emoji">💖</span>
+                <span class="floating-emoji">🌟</span>
+                <span class="floating-emoji">🎀</span>
+            </div>
+            <h1 class="app-title">🌸 wyy备忘录 🌸</h1>
+            <p class="app-subtitle">记录每一天的小确幸 ✨</p>
+        </header>
+
+        <!-- 统计栏 -->
+        <div class="stats-bar">
+            <div class="stat-item total">
+                <div class="stat-num" id="statTotal">0</div>
+                <div class="stat-label">📝 全部</div>
+            </div>
+            <div class="stat-item completed">
+                <div class="stat-num" id="statDone">0</div>
+                <div class="stat-label">✅ 已完成</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-num" id="statPending">0</div>
+                <div class="stat-label">📌 待办中</div>
+            </div>
+        </div>
+
+        <!-- 添加备忘录表单 -->
+        <div class="add-section" id="addSection">
+            <input
+                type="text"
+                class="add-input"
+                id="addInput"
+                placeholder="✍️ 写点什么吧..."
+                maxlength="200"
+                autocomplete="off"
+            >
+            <div class="add-row">
+                <!-- 分类选择 -->
+                <div class="category-chips" id="addCategoryChips">
+                    <span class="category-chip life selected" data-cat="life">🏠 生活</span>
+                    <span class="category-chip work" data-cat="work">💼 工作</span>
+                    <span class="category-chip study" data-cat="study">📚 学习</span>
+                    <span class="category-chip love" data-cat="love">💕 恋爱</span>
+                    <span class="category-chip other" data-cat="other">🎯 其他</span>
+                </div>
+                <!-- 优先级选择 -->
+                <div class="priority-select" id="addPriority">
+                    <button class="priority-btn selected-high" data-pri="high" title="高优先级">🔴</button>
+                    <button class="priority-btn" data-pri="medium" title="中优先级">🟡</button>
+                    <button class="priority-btn" data-pri="low" title="低优先级">🟢</button>
+                </div>
+                <!-- 添加按钮 -->
+                <button class="add-btn" id="addBtn">✨ 添加</button>
+            </div>
+        </div>
+
+        <!-- 筛选标签 -->
+        <div class="toolbar">
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input
+                    type="text"
+                    class="search-input"
+                    id="searchInput"
+                    placeholder="搜索备忘录..."
+                    autocomplete="off"
+                >
+            </div>
+        </div>
+        <div class="filter-tabs" id="filterTabs">
+            <span class="filter-tab active" data-filter="all">🌈 全部</span>
+            <span class="filter-tab" data-filter="life">🏠 生活</span>
+            <span class="filter-tab" data-filter="work">💼 工作</span>
+            <span class="filter-tab" data-filter="study">📚 学习</span>
+            <span class="filter-tab" data-filter="love">💕 恋爱</span>
+            <span class="filter-tab" data-filter="other">🎯 其他</span>
+        </div>
+
+        <!-- 备忘录列表 -->
+        <div class="memo-list" id="memoList"></div>
+
+        <!-- 空状态 -->
+        <div class="empty-state show" id="emptyState">
+            <span class="empty-emoji">📭</span>
+            <p class="empty-text">还没有备忘录呢~</p>
+            <p class="empty-hint">快写下你的第一条备忘吧 💕</p>
+        </div>
+
+        <!-- 页脚 -->
+        <footer class="footer">
+            <p>Made with 💕 · wyy备忘录 · 2026</p>
+        </footer>
+    </div>
+
+    <script>
+        (function() {
+            // ============ 常量配置 ============
+            const STORAGE_KEY = 'wyy_memo_app_data';
+            const CATEGORIES = {
+                life: { name: '生活', emoji: '🏠', badgeClass: 'badge-life' },
+                work: { name: '工作', emoji: '💼', badgeClass: 'badge-work' },
+                study: { name: '学习', emoji: '📚', badgeClass: 'badge-study' },
+                love: { name: '恋爱', emoji: '💕', badgeClass: 'badge-love' },
+                other: { name: '其他', emoji: '🎯', badgeClass: 'badge-other' },
+            };
+            const PRIORITY_MAP = {
+                high: { label: '高', stars: '⭐⭐⭐', class: 'pri-high' },
+                medium: { label: '中', stars: '⭐⭐', class: 'pri-medium' },
+                low: { label: '低', stars: '⭐', class: 'pri-low' },
+            };
+
+            // ============ 状态管理 ============
+            let state = {
+                memos: [],
+                filter: 'all', // 'all' | 'life' | 'work' | 'study' | 'love' | 'other'
+                searchQuery: '',
+                addCategory: 'life',
+                addPriority: 'high',
+                editingId: null,
+                swipeStartX: 0,
+                swipeCurrentX: 0,
+                swipedMemoId: null,
+            };
+
+            // ============ DOM 引用缓存 ============
+            const $ = (sel) => document.querySelector(sel);
+            const $$ = (sel) => document.querySelectorAll(sel);
+
+            const dom = {
+                mascot: $('#mascot'),
+                addInput: $('#addInput'),
+                addBtn: $('#addBtn'),
+                addCategoryChips: $('#addCategoryChips'),
+                addPriority: $('#addPriority'),
+                filterTabs: $('#filterTabs'),
+                searchInput: $('#searchInput'),
+                memoList: $('#memoList'),
+                emptyState: $('#emptyState'),
+                statTotal: $('#statTotal'),
+                statDone: $('#statDone'),
+                statPending: $('#statPending'),
+                toastContainer: $('#toastContainer'),
+                pullIndicator: $('#pullIndicator'),
+                pullText: $('#pullText'),
+                pullSpinner: $('#pullSpinner'),
+                appContainer: $('#appContainer'),
+            };
+
+            // ============ 本地存储操作 ============
+            function loadMemos() {
+                try {
+                    const raw = localStorage.getItem(STORAGE_KEY);
+                    if (raw) {
+                        state.memos = JSON.parse(raw);
+                    }
+                } catch (e) {
+                    console.warn('加载数据失败:', e);
+                    state.memos = [];
+                }
+            }
+
+            function saveMemos() {
+                try {
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(state.memos));
+                } catch (e) {
+                    showToast('⚠️ 保存失败，存储空间不足');
+                }
+            }
+
+            // ============ 工具函数 ============
+            function genId() {
+                return 'memo_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
+            }
+
+            function formatTime(isoStr) {
+                const date = new Date(isoStr);
+                const now = new Date();
+                const diffMs = now - date;
+                const diffMin = Math.floor(diffMs / 60000);
+                const diffHour = Math.floor(diffMs / 3600000);
+                const diffDay = Math.floor(diffMs / 86400000);
+
+                if (diffMin < 1) return '刚刚';
+                if (diffMin < 60) return diffMin + '分钟前';
+                if (diffHour < 24) return diffHour + '小时前';
+                if (diffDay < 2) return '昨天';
+                if (diffDay < 7) return diffDay + '天前';
+
+                const y = date.getFullYear();
+                const m = String(date.getMonth() + 1).padStart(2, '0');
+                const d = String(date.getDate()).padStart(2, '0');
+                if (y === now.getFullYear()) return m + '/' + d;
+                return y + '/' + m + '/' + d;
+            }
+
+            // 防抖
+            function debounce(fn, delay) {
+                let timer;
+                return function(...args) {
+                    clearTimeout(timer);
+                    timer = setTimeout(() => fn.apply(this, args), delay);
+                };
+            }
+
+            // ============ Toast 通知 ============
+            function showToast(msg, emoji = '') {
+                const toast = document.createElement('div');
+                toast.className = 'toast';
+                toast.innerHTML = (emoji ? emoji + ' ' : '') + msg;
+                dom.toastContainer.appendChild(toast);
+
+                // 自动移除
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toast.remove();
+                    }
+                }, 2400);
+            }
+
+            // ============ 粒子效果 ============
+            function spawnParticles(x, y, count = 12) {
+                const emojis = ['✨', '💖', '🌸', '⭐', '💕', '🎀', '🌟', '💝'];
+                const particles = [];
+
+                for (let i = 0; i < count; i++) {
+                    const particle = document.createElement('span');
+                    particle.className = 'particle';
+                    particle.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                    particle.style.left = x + 'px';
+                    particle.style.top = y + 'px';
+                    particle.style.setProperty('--px', (Math.random() - 0.5) * 160 + 'px');
+                    particle.style.setProperty('--py', -(Math.random() * 100 + 40) + 'px');
+                    particle.style.animationDuration = (0.5 + Math.random() * 0.6) + 's';
+                    particle.style.fontSize = (14 + Math.random() * 16) + 'px';
+                    document.body.appendChild(particle);
+                    particles.push(particle);
+                }
+
+                // 清理粒子
+                setTimeout(() => {
+                    particles.forEach(p => {
+                        if (p.parentNode) p.remove();
+                    });
+                }, 1000);
+            }
+
+            // ============ 吉祥物互动 ============
+            function bounceMascot() {
+                dom.mascot.style.animation = 'none';
+                dom.mascot.offsetHeight; // 触发回流
+                dom.mascot.style.animation = 'mascotBounce 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+                setTimeout(() => {
+                    dom.mascot.style.animation = 'mascotFloat 3s ease-in-out infinite';
+                }, 500);
+            }
+
+            dom.mascot.addEventListener('click', (e) => {
+                bounceMascot();
+                const rect = dom.mascot.getBoundingClientRect();
+                const cx = rect.left + rect.width / 2;
+                const cy = rect.top + rect.height / 2;
+                spawnParticles(cx, cy, 15);
+                // 随机切换吉祥物表情
+                const mascots = ['🐰', '🐱', '🐶', '🐼', '🐨', '🦊', '🐻', '🐯'];
+                const current = dom.mascot.textContent;
+                let next;
+                do {
+                    next = mascots[Math.floor(Math.random() * mascots.length)];
+                } while (next === current && mascots.length > 1);
+                dom.mascot.textContent = next;
+                showToast('换了个造型~', '✨');
+            });
+
+            // ============ 备忘录 CRUD ============
+            function addMemo(content, category, priority) {
+                const memo = {
+                    id: genId(),
+                    content: content.trim(),
+                    category: category,
+                    priority: priority,
+                    completed: false,
+                    createdAt: new Date().toISOString(),
+                    completedAt: null,
+                };
+                state.memos.unshift(memo); // 新备忘录放在最前面
+                saveMemos();
+                render();
+                showToast('添加成功！', '✅');
+
+                // 粒子效果 - 在添加按钮位置
+                const rect = dom.addBtn.getBoundingClientRect();
+                spawnParticles(rect.left + rect.width / 2, rect.top + rect.height / 2, 10);
+                bounceMascot();
+            }
+
+            function deleteMemo(id) {
+                const idx = state.memos.findIndex(m => m.id === id);
+                if (idx === -1) return;
+                state.memos.splice(idx, 1);
+                state.swipedMemoId = null;
+                saveMemos();
+                render();
+                showToast('已删除', '🗑️');
+            }
+
+            function toggleMemo(id, event) {
+                const memo = state.memos.find(m => m.id === id);
+                if (!memo) return;
+                memo.completed = !memo.completed;
+                memo.completedAt = memo.completed ? new Date().toISOString() : null;
+                saveMemos();
+                render();
+
+                if (memo.completed && event) {
+                    // 完成时的粒子效果
+                    spawnParticles(event.clientX, event.clientY, 12);
+                    bounceMascot();
+                    showToast('太棒了！完成一项~', '🎉');
+                }
+            }
+
+            function updateMemo(id, newContent, newCategory, newPriority) {
+                const memo = state.memos.find(m => m.id === id);
+                if (!memo) return;
+                memo.content = newContent.trim();
+                memo.category = newCategory;
+                memo.priority = newPriority;
+                state.editingId = null;
+                saveMemos();
+                render();
+                showToast('修改成功！', '✏️');
+            }
+
+            // ============ 渲染 ============
+            function getFilteredMemos() {
+                let filtered = [...state.memos];
+
+                // 按分类筛选
+                if (state.filter !== 'all') {
+                    filtered = filtered.filter(m => m.category === state.filter);
+                }
+
+                // 按搜索关键词筛选
+                if (state.searchQuery.trim()) {
+                    const q = state.searchQuery.trim().toLowerCase();
+                    filtered = filtered.filter(m =>
+                        m.content.toLowerCase().includes(q)
+                    );
+                }
+
+                return filtered;
+            }
+
+            function renderMemoCard(memo, isNew) {
+                const cat = CATEGORIES[memo.category] || CATEGORIES.other;
+                const pri = PRIORITY_MAP[memo.priority] || PRIORITY_MAP.medium;
+                const isEditing = state.editingId === memo.id;
+                const isSwiped = state.swipedMemoId === memo.id;
+
+                const wrapper = document.createElement('div');
+                wrapper.className = 'memo-card-wrapper';
+                wrapper.setAttribute('data-memo-id', memo.id);
+
+                // 删除背景操作
+                const deleteAction = document.createElement('div');
+                deleteAction.className = 'memo-delete-action';
+                deleteAction.textContent = '🗑️ 删除';
+                deleteAction.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    deleteMemo(memo.id);
+                });
+
+                // 备忘录卡片
+                const card = document.createElement('div');
+                card.className = 'memo-card';
+                if (memo.completed) card.classList.add('done');
+                if (isNew) card.classList.add('new-memo');
+                if (isSwiped) card.classList.add('swiped');
+
+                if (isEditing) {
+                    card.classList.add('editing');
+                    // 编辑模式
+                    card.innerHTML = `
+                        <div class="memo-body">
+                            <input type="text" class="edit-input" value="${escapeHtml(memo.content)}" maxlength="200" autocomplete="off">
+                            <div class="edit-row">
+                                <div class="category-chips edit-cats">
+                                    ${Object.entries(CATEGORIES).map(([key, val]) =>
+                                        `<span class="category-chip ${key} ${memo.category === key ? 'selected' : ''}" data-cat="${key}">${val.emoji} ${val.name}</span>`
+                                    ).join('')}
+                                </div>
+                                <div class="priority-select edit-pri">
+                                    <button class="priority-btn ${memo.priority === 'high' ? 'selected-high' : ''}" data-pri="high">🔴</button>
+                                    <button class="priority-btn ${memo.priority === 'medium' ? 'selected-medium' : ''}" data-pri="medium">🟡</button>
+                                    <button class="priority-btn ${memo.priority === 'low' ? 'selected-low' : ''}" data-pri="low">🟢</button>
+                                </div>
+                                <button class="edit-save">💾 保存</button>
+                                <button class="edit-cancel">❌ 取消</button>
+                            </div>
+                        </div>
+                    `;
+
+                    // 编辑保存事件
+                    setTimeout(() => {
+                        const saveBtn = card.querySelector('.edit-save');
+                        const cancelBtn = card.querySelector('.edit-cancel');
+                        const editInput = card.querySelector('.edit-input');
+                        const catChips = card.querySelectorAll('.edit-cats .category-chip');
+                        const priBtns = card.querySelectorAll('.edit-pri .priority-btn');
+
+                        let editCat = memo.category;
+                        let editPri = memo.priority;
+
+                        catChips.forEach(chip => {
+                            chip.addEventListener('click', () => {
+                                catChips.forEach(c => c.classList.remove('selected'));
+                                chip.classList.add('selected');
+                                editCat = chip.dataset.cat;
+                            });
+                        });
+
+                        priBtns.forEach(btn => {
+                            btn.addEventListener('click', () => {
+                                priBtns.forEach(b => {
+                                    b.className = 'priority-btn';
+                                });
+                                if (btn.dataset.pri === 'high') btn.classList.add('selected-high');
+                                if (btn.dataset.pri === 'medium') btn.classList.add('selected-medium');
+                                if (btn.dataset.pri === 'low') btn.classList.add('selected-low');
+                                editPri = btn.dataset.pri;
+                            });
+                        });
+
+                        saveBtn.addEventListener('click', () => {
+                            const newContent = editInput.value.trim();
+                            if (!newContent) {
+                                showToast('内容不能为空哦~', '⚠️');
+                                return;
+                            }
+                            updateMemo(memo.id, newContent, editCat, editPri);
+                        });
+
+                        cancelBtn.addEventListener('click', () => {
+                            state.editingId = null;
+                            render();
+                        });
+
+                        editInput.focus();
+                        editInput.addEventListener('keydown', (e) => {
+                            if (e.key === 'Enter') {
+                                const newContent = editInput.value.trim();
+                                if (!newContent) {
+                                    showToast('内容不能为空哦~', '⚠️');
+                                    return;
+                                }
+                                updateMemo(memo.id, newContent, editCat, editPri);
+                            }
+                            if (e.key === 'Escape') {
+                                state.editingId = null;
+                                render();
+                            }
+                        });
+                    }, 0);
+
+                } else {
+                    // 普通显示模式
+                    card.innerHTML = `
+                        <div class="memo-top-row">
+                            <div class="memo-checkbox ${memo.completed ? 'checked' : ''}" data-toggle="${memo.id}"></div>
+                            <div class="memo-body">
+                                <div class="memo-content">${escapeHtml(memo.content)}</div>
+                                <div class="memo-meta">
+                                    <span class="memo-badge ${cat.badgeClass}">${cat.emoji} ${cat.name}</span>
+                                    <span class="memo-priority" title="优先级：${pri.label}">${pri.stars}</span>
+                                    <span class="memo-time">🕐 ${formatTime(memo.createdAt)}</span>
+                                    ${memo.completed ? '<span class="memo-time">✅ ' + formatTime(memo.completedAt) + '</span>' : ''}
+                                </div>
+                            </div>
+                            <div class="memo-actions">
+                                <button class="memo-action-btn" data-edit="${memo.id}" title="编辑">✏️</button>
+                                <button class="memo-action-btn" data-delete="${memo.id}" title="删除">🗑️</button>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                // === 触摸滑动删除 ===
+                let touchStartX = 0;
+                let touchStartY = 0;
+                let touchCurrentX = 0;
+                let isSwiping = false;
+                let swipeOffset = 0;
+
+                card.addEventListener('touchstart', (e) => {
+                    if (state.editingId === memo.id) return;
+                    touchStartX = e.touches[0].clientX;
+                    touchStartY = e.touches[0].clientY;
+                    touchCurrentX = touchStartX;
+                    isSwiping = false;
+                    swipeOffset = state.swipedMemoId === memo.id ? -85 : 0;
+                }, { passive: true });
+
+                card.addEventListener('touchmove', (e) => {
+                    if (state.editingId === memo.id) return;
+                    const dx = e.touches[0].clientX - touchStartX;
+                    const dy = e.touches[0].clientY - touchStartY;
+
+                    // 只在水平滑动明显时触发（防止与垂直滚动冲突）
+                    if (!isSwiping && Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+                        isSwiping = true;
+                    }
+
+                    if (isSwiping) {
+                        touchCurrentX = e.touches[0].clientX;
+                        const offset = Math.min(0, Math.max(-85, dx + swipeOffset));
+                        card.style.transform = `translateX(${offset}px)`;
+                        card.style.transition = 'none';
+                    }
+                }, { passive: true });
+
+                card.addEventListener('touchend', (e) => {
+                    if (state.editingId === memo.id) return;
+                    card.style.transition = 'all 0.3s ease';
+                    const finalDx = touchCurrentX - touchStartX + swipeOffset;
+
+                    if (finalDx < -60) {
+                        // 滑开删除区域
+                        card.style.transform = 'translateX(-85px)';
+                        card.classList.add('swiped');
+                        state.swipedMemoId = memo.id;
+                    } else if (finalDx < -20) {
+                        // 回弹
+                        card.style.transform = 'translateX(0px)';
+                        card.classList.remove('swiped');
+                        state.swipedMemoId = null;
+                    } else {
+                        card.style.transform = 'translateX(0px)';
+                        card.classList.remove('swiped');
+                        state.swipedMemoId = null;
+                    }
+                });
+
+                // 点击卡片外部关闭滑动
+                card.addEventListener('click', (e) => {
+                    if (state.editingId === memo.id) return;
+                    // 如果当前有其他卡片处于滑开状态，关闭它
+                    if (state.swipedMemoId && state.swipedMemoId !== memo.id) {
+                        state.swipedMemoId = null;
+                        render();
+                    }
+                });
+
+                // === 事件委托 ===
+                card.addEventListener('click', (e) => {
+                    if (state.editingId === memo.id) return;
+
+                    const toggleBtn = e.target.closest('[data-toggle]');
+                    const editBtn = e.target.closest('[data-edit]');
+                    const deleteBtn = e.target.closest('[data-delete]');
+
+                    if (toggleBtn) {
+                        e.stopPropagation();
+                        // 先触发完成动画
+                        card.classList.add('completing');
+                        setTimeout(() => {
+                            toggleMemo(memo.id, e);
+                        }, 150);
+                    }
+
+                    if (editBtn) {
+                        e.stopPropagation();
+                        state.editingId = memo.id;
+                        state.swipedMemoId = null;
+                        render();
+                    }
+
+                    if (deleteBtn) {
+                        e.stopPropagation();
+                        if (confirm('确定要删除这条备忘录吗？🐰')) {
+                            card.classList.add('removing');
+                            setTimeout(() => {
+                                deleteMemo(memo.id);
+                            }, 300);
+                        }
+                    }
+                });
+
+                wrapper.appendChild(deleteAction);
+                wrapper.appendChild(card);
+                return wrapper;
+            }
+
+            function escapeHtml(str) {
+                const div = document.createElement('div');
+                div.textContent = str;
+                return div.innerHTML;
+            }
+
+            function render() {
+                const filtered = getFilteredMemos();
+
+                // 渲染列表
+                dom.memoList.innerHTML = '';
+                if (filtered.length === 0) {
+                    dom.emptyState.classList.add('show');
+                    // 根据是否有筛选条件显示不同空状态
+                    if (state.searchQuery || state.filter !== 'all') {
+                        dom.emptyState.querySelector('.empty-emoji').textContent = '🔍';
+                        dom.emptyState.querySelector('.empty-text').textContent = '没有找到匹配的备忘录';
+                        dom.emptyState.querySelector('.empty-hint').textContent = '试试换个关键词或分类吧~';
+                    } else {
+                        dom.emptyState.querySelector('.empty-emoji').textContent = '📭';
+                        dom.emptyState.querySelector('.empty-text').textContent = '还没有备忘录呢~';
+                        dom.emptyState.querySelector('.empty-hint').textContent = '快写下你的第一条备忘吧 💕';
+                    }
+                } else {
+                    dom.emptyState.classList.remove('show');
+                    filtered.forEach((memo, idx) => {
+                        const card = renderMemoCard(memo, idx === 0 && state.filter === 'all' && !state.searchQuery && state.memos.length > 0 && memo.id === state.memos[0].id);
+                        dom.memoList.appendChild(card);
+                    });
+                }
+
+                // 更新统计
+                updateStats();
+
+                // 更新筛选标签状态
+                dom.filterTabs.querySelectorAll('.filter-tab').forEach(tab => {
+                    tab.classList.toggle('active', tab.dataset.filter === state.filter);
+                });
+
+                // 更新添加表单分类标签状态
+                dom.addCategoryChips.querySelectorAll('.category-chip').forEach(chip => {
+                    chip.classList.toggle('selected', chip.dataset.cat === state.addCategory);
+                });
+
+                // 更新添加表单优先级状态
+                dom.addPriority.querySelectorAll('.priority-btn').forEach(btn => {
+                    btn.className = 'priority-btn';
+                    if (btn.dataset.pri === state.addPriority) {
+                        if (state.addPriority === 'high') btn.classList.add('selected-high');
+                        if (state.addPriority === 'medium') btn.classList.add('selected-medium');
+                        if (state.addPriority === 'low') btn.classList.add('selected-low');
+                    }
+                });
+            }
+
+            function updateStats() {
+                const total = state.memos.length;
+                const done = state.memos.filter(m => m.completed).length;
+                const pending = total - done;
+
+                // 数字动画
+                animateNumber(dom.statTotal, total);
+                animateNumber(dom.statDone, done);
+                animateNumber(dom.statPending, pending);
+            }
+
+            function animateNumber(el, target) {
+                const current = parseInt(el.textContent) || 0;
+                if (current === target) {
+                    el.textContent = target;
+                    return;
+                }
+                const diff = target - current;
+                const steps = Math.min(Math.abs(diff), 15);
+                const stepSize = diff / steps;
+                let step = 0;
+
+                const timer = setInterval(() => {
+                    step++;
+                    if (step >= steps) {
+                        el.textContent = target;
+                        clearInterval(timer);
+                    } else {
+                        el.textContent = Math.round(current + stepSize * step);
+                    }
+                }, 40);
+            }
+
+            // ============ 事件处理 ============
+            // 添加备忘录
+            dom.addBtn.addEventListener('click', () => {
+                const content = dom.addInput.value.trim();
+                if (!content) {
+                    showToast('先写点什么吧~ ✍️', '📝');
+                    dom.addInput.focus();
+                    // 输入框抖动提示
+                    dom.addInput.style.animation = 'completeShake 0.5s ease';
+                    setTimeout(() => {
+                        dom.addInput.style.animation = '';
+                    }, 500);
+                    return;
+                }
+                addMemo(content, state.addCategory, state.addPriority);
+                dom.addInput.value = '';
+                dom.addInput.focus();
+            });
+
+            // 回车添加
+            dom.addInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    dom.addBtn.click();
+                }
+            });
+
+            // 分类选择（添加表单）
+            dom.addCategoryChips.addEventListener('click', (e) => {
+                const chip = e.target.closest('.category-chip');
+                if (!chip) return;
+                state.addCategory = chip.dataset.cat;
+                render();
+            });
+
+            // 优先级选择（添加表单）
+            dom.addPriority.addEventListener('click', (e) => {
+                const btn = e.target.closest('.priority-btn');
+                if (!btn) return;
+                state.addPriority = btn.dataset.pri;
+                render();
+            });
+
+            // 筛选标签
+            dom.filterTabs.addEventListener('click', (e) => {
+                const tab = e.target.closest('.filter-tab');
+                if (!tab) return;
+                state.filter = tab.dataset.filter;
+                state.swipedMemoId = null;
+                render();
+                if (state.filter !== 'all') {
+                    const cat = CATEGORIES[state.filter];
+                    showToast('筛选：' + cat.emoji + ' ' + cat.name, '🏷️');
+                }
+            });
+
+            // 搜索（防抖）
+            dom.searchInput.addEventListener('input', debounce((e) => {
+                state.searchQuery = e.target.value;
+                state.swipedMemoId = null;
+                render();
+            }, 300));
+
+            // ============ 下拉刷新 ============
+            let pullStartY = 0;
+            let pullCurrentY = 0;
+            let isPulling = false;
+            let pullThreshold = 70;
+
+            document.addEventListener('touchstart', (e) => {
+                if (window.scrollY <= 5) {
+                    pullStartY = e.touches[0].clientY;
+                    isPulling = false;
+                }
+            }, { passive: true });
+
+            document.addEventListener('touchmove', (e) => {
+                if (window.scrollY <= 5 && pullStartY > 0) {
+                    pullCurrentY = e.touches[0].clientY;
+                    const pullDistance = pullCurrentY - pullStartY;
+
+                    if (pullDistance > 20 && !isPulling) {
+                        isPulling = true;
+                    }
+
+                    if (isPulling && pullDistance > 0) {
+                        // 阻尼效果：越拉越难拉
+                        const damped = Math.min(pullDistance * 0.4, 100);
+                        dom.pullIndicator.style.transform = `translateX(-50%) translateY(${damped - 50}px)`;
+                        dom.pullIndicator.classList.add('active');
+
+                        if (pullDistance > pullThreshold) {
+                            dom.pullText.textContent = '✨ 松开刷新';
+                        } else {
+                            dom.pullText.textContent = '⬇️ 下拉刷新';
+                        }
+                    }
+                }
+            }, { passive: true });
+
+            document.addEventListener('touchend', () => {
+                if (isPulling) {
+                    const pullDistance = pullCurrentY - pullStartY;
+
+                    if (pullDistance > pullThreshold) {
+                        // 触发刷新
+                        dom.pullText.textContent = '刷新中...';
+                        dom.pullSpinner.style.display = 'inline-block';
+
+                        setTimeout(() => {
+                            loadMemos();
+                            render();
+                            dom.pullIndicator.style.transform = 'translateX(-50%) translateY(-100%)';
+                            dom.pullIndicator.classList.remove('active');
+                            dom.pullSpinner.style.display = 'none';
+                            dom.pullText.textContent = '⬇️ 下拉刷新';
+                            showToast('已刷新 ✨', '🔄');
+                            bounceMascot();
+                        }, 600);
+                    } else {
+                        // 回弹
+                        dom.pullIndicator.style.transform = 'translateX(-50%) translateY(-100%)';
+                        dom.pullIndicator.classList.remove('active');
+                    }
+
+                    isPulling = false;
+                    pullStartY = 0;
+                    pullCurrentY = 0;
+                }
+            });
+
+            // ============ 键盘快捷键 ============
+            document.addEventListener('keydown', (e) => {
+                // Ctrl+K / Cmd+K 聚焦搜索
+                if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                    e.preventDefault();
+                    dom.searchInput.focus();
+                }
+                // Escape 取消编辑
+                if (e.key === 'Escape' && state.editingId) {
+                    state.editingId = null;
+                    render();
+                }
+            });
+
+            // ============ PWA 设置 ============
+            function setupPWA() {
+                // 动态创建 manifest link
+                const manifestData = {
+                    name: 'wyy备忘录',
+                    short_name: 'wyy备忘录',
+                    description: 'wyy的专属备忘录，记录每一天的小确幸',
+                    start_url: '.',
+                    display: 'standalone',
+                    orientation: 'portrait',
+                    background_color: '#FFF8F0',
+                    theme_color: '#FFD1DC',
+                    icons: [{
+                        src: 'data:image/svg+xml,' + encodeURIComponent(
+                            '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192"><rect width="192" height="192" rx="40" fill="#FFD1DC"/><text x="96" y="120" font-size="100" text-anchor="middle">🐰</text></svg>'
+                        ),
+                        sizes: '192x192',
+                        type: 'image/svg+xml',
+                        purpose: 'any maskable'
+                    }]
+                };
+
+                const manifestBlob = new Blob([JSON.stringify(manifestData)], { type: 'application/json' });
+                const manifestURL = URL.createObjectURL(manifestBlob);
+
+                // 检查是否已有 manifest link
+                let manifestLink = document.querySelector('link[rel="manifest"]');
+                if (!manifestLink) {
+                    manifestLink = document.createElement('link');
+                    manifestLink.rel = 'manifest';
+                    document.head.appendChild(manifestLink);
+                }
+                manifestLink.href = manifestURL;
+
+                // 注册 Service Worker
+                if ('serviceWorker' in navigator) {
+                    // 检查 sw.js 是否在同目录下
+                    const swPath = './sw.js';
+
+                    navigator.serviceWorker.register(swPath, { scope: './' })
+                        .then(registration => {
+                            console.log('🎉 Service Worker 注册成功:', registration.scope);
+                        })
+                        .catch(err => {
+                            console.warn('⚠️ Service Worker 注册失败（离线缓存将不可用）:', err.message);
+                            // 不强制需要 SW，应用仍然可以正常使用
+                        });
+                }
+            }
+
+            // ============ 初始化 ============
+            function init() {
+                loadMemos();
+
+                // 如果没有备忘录，添加一些示例数据
+                if (state.memos.length === 0) {
+                    const samples = [
+                        { content: '欢迎使用wyy备忘录！点击左侧圆圈可以标记完成哦~', category: 'life', priority: 'high', completed: false, createdAt: new Date(Date.now() - 3600000).toISOString(), completedAt: null },
+                        { content: '左滑备忘录可以快速删除 🗑️', category: 'study', priority: 'medium', completed: false, createdAt: new Date(Date.now() - 7200000).toISOString(), completedAt: null },
+                        { content: '点击顶部的兔兔可以切换吉祥物 🐰', category: 'love', priority: 'low', completed: false, createdAt: new Date(Date.now() - 10800000).toISOString(), completedAt: null },
+                        { content: '支持搜索、按分类筛选、编辑和删除功能', category: 'work', priority: 'medium', completed: true, createdAt: new Date(Date.now() - 86400000).toISOString(), completedAt: new Date(Date.now() - 43200000).toISOString() },
+                    ];
+                    state.memos = samples.map(s => ({ ...s, id: genId() }));
+                    saveMemos();
+                }
+
+                render();
+                setupPWA();
+
+                // 显示欢迎提示
+                const hasVisited = localStorage.getItem('wyy_memo_visited');
+                if (!hasVisited) {
+                    setTimeout(() => {
+                        showToast('欢迎来到wyy备忘录！💕', '🐰');
+                        setTimeout(() => {
+                            showToast('点击 🐰 有惊喜哦~', '✨');
+                        }, 2500);
+                    }, 500);
+                    localStorage.setItem('wyy_memo_visited', '1');
+                }
+
+                console.log('🌸 wyy备忘录已就绪！');
+                console.log('💡 提示：');
+                console.log('  - 点击 🐰 切换吉祥物');
+                console.log('  - 左滑备忘录快速删除');
+                console.log('  - 下拉刷新页面');
+                console.log('  - Ctrl+K 快速搜索');
+            }
+
+            // 启动应用
+            init();
+        })();
+    </script>
+</body>
+</html>
