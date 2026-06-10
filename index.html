@@ -13,6 +13,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐰</text></svg>">
+    <link rel="manifest" href="./manifest.json">
+    <meta name="apple-touch-icon" content="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 192 192%22><rect width=%22192%22 height=%22192%22 rx=%2240%22 fill=%22%23FFD1DC%22/><text x=%2296%22 y=%22120%22 font-size=%22100%22 text-anchor=%22middle%22>🐰</text></svg>">
 
     <style>
         /* ============ CSS 变量 & 重置 ============ */
@@ -1737,50 +1739,14 @@
 
             // ============ PWA 设置 ============
             function setupPWA() {
-                // 动态创建 manifest link
-                const manifestData = {
-                    name: 'wyy备忘录',
-                    short_name: 'wyy备忘录',
-                    description: 'wyy的专属备忘录，记录每一天的小确幸',
-                    start_url: '.',
-                    display: 'standalone',
-                    orientation: 'portrait',
-                    background_color: '#FFF8F0',
-                    theme_color: '#FFD1DC',
-                    icons: [{
-                        src: 'data:image/svg+xml,' + encodeURIComponent(
-                            '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192"><rect width="192" height="192" rx="40" fill="#FFD1DC"/><text x="96" y="120" font-size="100" text-anchor="middle">🐰</text></svg>'
-                        ),
-                        sizes: '192x192',
-                        type: 'image/svg+xml',
-                        purpose: 'any maskable'
-                    }]
-                };
-
-                const manifestBlob = new Blob([JSON.stringify(manifestData)], { type: 'application/json' });
-                const manifestURL = URL.createObjectURL(manifestBlob);
-
-                // 检查是否已有 manifest link
-                let manifestLink = document.querySelector('link[rel="manifest"]');
-                if (!manifestLink) {
-                    manifestLink = document.createElement('link');
-                    manifestLink.rel = 'manifest';
-                    document.head.appendChild(manifestLink);
-                }
-                manifestLink.href = manifestURL;
-
-                // 注册 Service Worker
+                // 注册 Service Worker（离线缓存）
                 if ('serviceWorker' in navigator) {
-                    // 检查 sw.js 是否在同目录下
-                    const swPath = './sw.js';
-
-                    navigator.serviceWorker.register(swPath, { scope: './' })
+                    navigator.serviceWorker.register('./sw.js', { scope: './' })
                         .then(registration => {
                             console.log('🎉 Service Worker 注册成功:', registration.scope);
                         })
                         .catch(err => {
-                            console.warn('⚠️ Service Worker 注册失败（离线缓存将不可用）:', err.message);
-                            // 不强制需要 SW，应用仍然可以正常使用
+                            console.warn('⚠️ Service Worker 注册失败:', err.message);
                         });
                 }
             }
